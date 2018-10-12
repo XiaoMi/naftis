@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: naftis-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    heritage: {{ .Release.Service }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app: naftis-api
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    app: naftis-api
+    release: {{ .Release.Name }}
+  ports:
+    - port: {{ .Values.api.service.internalPort }}
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: naftis-ui
+  namespace: {{ .Release.Namespace }}
+  labels:
+    heritage: {{ .Release.Service }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app: naftis-ui
+    release: {{ .Release.Name }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: naftis-ui
+    release: {{ .Release.Name }}
+  ports:
+    - port: {{ .Values.ui.service.internalPort }}
+      protocol: TCP

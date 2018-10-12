@@ -1,0 +1,12 @@
+mode="debug"
+namespace=""
+[logger]
+    [logger.console]
+        color=true
+        prefix="[naftis]"
+        level="Debug"
+    [logger.zap]
+        path="naftis-api.log"
+        level="Debug"
+[db]
+    default="naftis:naftisIsAwesome@tcp(naftis-mysql.naftis.svc.cluster.local:3306)/naftis?charset=utf8&parseTime=True&loc=Local"

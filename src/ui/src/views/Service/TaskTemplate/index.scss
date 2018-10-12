@@ -1,0 +1,169 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import '../../../commons/common';
+
+.task-temp {
+  font-size: $font-size-s;
+  color: #333333;
+
+  .temp-top-wrap {
+    padding: 40px 32px 40px 32px;
+    margin-bottom: 24px;
+    background: url('https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png') center center no-repeat;
+    background-color: $background-white;
+    background-size: 150px 100px;
+
+    h2 {
+      padding-bottom: 20px;
+    }
+
+    p {
+      color: $font-color-content;
+      padding-bottom: 20px;
+    }
+
+    .istio-file {
+      cursor: pointer;
+      height: 24px;
+      line-height: 24px;
+      padding-left: 30px;
+      text-decoration: none;
+      outline: none;
+      background: url('https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg') no-repeat 0 0;
+
+      a {
+        color: $background-blue;
+      }
+    }
+  }
+
+  .temp-center-wrap {
+    .temp-list {
+      display: inline-block;
+      vertical-align: middle;
+      background: $background-white;
+      width: 32%;
+      margin-bottom: 1%;
+      margin-right: 2%;
+      .add-wrap {
+        cursor: pointer;
+        display: flex;
+        min-height: 204px;
+        justify-content: space-around;
+        align-items: center;
+        color: $background-blue;
+        border: 1px dashed $background-border;
+      }
+      .content-wrap {
+        cursor: pointer;
+        display: flex;
+        min-height: 204px;
+        justify-content: space-around;
+        align-items: center;
+        flex-direction: column
+      }
+      .col-panel-title {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        width: 100%;
+        padding: 0px 20px;
+
+        .delete-container {
+          position: absolute;
+          right: 15px;
+          top: -5px;
+        }
+      }
+      .temp-list-footer {
+        width: 100%;
+      }
+      .temp-list-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .temp-watch, .temp-create {
+        cursor: pointer;
+        width: 49%;
+        text-align: center;
+        color: $font-color-remark;
+      }
+      .temp-row-line {
+        margin-bottom: 15px;
+        height: 1px;
+        width: 100%;
+        border-top: 1px solid $background-border;
+      }
+      .temp-line {
+        height: 14px;
+        border-right: 1px solid $background-border;
+      }
+      .img-container {
+        margin-top: -10px;
+        min-width: 45px;
+        min-height: 45px;
+        border-radius: 50%;
+      }
+      .img {
+        margin-top: 8px;
+        border-radius: 50px;
+        width: 50px;
+        height: 50px;
+        -webkit-border-radius: 50px;
+        -moz-border-radius: 50px;
+        -ms-border-radius: 50px;
+        -o-border-radius: 50px;
+}
+      .temp-right {
+        margin-left: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+      .temp-panel-title {
+        color: $background-black;
+        font-size: 18px;
+        height: 24px;
+      }
+      .temp-panel-content {
+        margin-top: 10px;
+        font-size: 16px;
+        color: $font-color-remark;
+        min-height: 50px;
+      }
+    }
+    .temp-list:nth-child(3n){
+      margin-right: 0
+     }
+  }
+}
+
+.hi-modal {
+  .modal-dialog {
+    top: 70px
+  }
+
+  .content {
+    max-height: 500px;
+    overflow-y: hidden;
+  }
+}
+
+.add-new-button {
+  padding-bottom: 20px;
+}
+

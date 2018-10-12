@@ -1,0 +1,4 @@
+#! /bin/bash
+
+# building and starting naftis-api
+make build.api && ./bin/naftis-api start --config=config/in-local.toml --inCluster=false

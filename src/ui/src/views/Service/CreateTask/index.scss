@@ -1,0 +1,155 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import '../../../commons/common';
+
+.create-task {
+  font-size: $font-size-s;
+  color: #333333;
+  .success-icon {
+    color: #1DA653;
+    font-size: 100px;
+  }
+  .success{
+    color: #000000;
+    font-size: 24px
+  }
+  
+  .success-info{
+    color: #00000073;
+    font-size: 12px
+  }
+  .table-backgrand {
+    border-radius:5px;
+    padding: 50px 150px;
+    background-color: #fafafa  ;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    -ms-border-radius:5px;
+    -o-border-radius:5px;
+}
+  .create-top-wrap {
+    padding: 40px 32px 40px 32px;
+    margin-bottom: 24px;
+    background: url('https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png') center center no-repeat;
+    background-color: $background-white;
+    background-size: 150px 100px;
+
+    h2 {
+      padding-bottom: 20px;
+    }
+
+    p {
+      color: $font-color-content;
+      padding-bottom: 20px;
+    }
+
+    .istio-file {
+      cursor: pointer;
+      height: 24px;
+      line-height: 24px;
+      padding-left: 30px;
+      text-decoration: none;
+      outline: none;
+      background: url('https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg') no-repeat 0 0;
+    }
+  }
+
+  .create-center-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: $background-white;
+    padding: 40px 32px 40px 32px;
+
+    .create-list-foot {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      .create-delete {
+        cursor: pointer;
+        color: $background-red;
+      }
+    }
+
+    .create-stepper {
+      width: 60%;
+    }
+
+    .create-panel-content {
+
+    }
+
+    .task-modal-content {
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    .create-task-form {
+      max-width: 710px;
+    }
+
+    .create-task-content {
+      max-width: 100%;
+      padding-top: 30px;
+
+      .hi-panel {
+        margin-bottom: 24px;
+
+        .hi-counter {
+          padding-top: 4px;
+
+          input{
+            width: 136px !important;
+          }
+          &:after {
+            content: '%';
+            position: absolute;
+            right: 37%;
+            top: 13px;
+          }
+        }
+      }
+    }
+
+    .next-step {
+      display: flex;
+      width: 40%;
+      justify-content: center;
+      padding-top: 30px;
+    }
+
+    .varInfo {
+      text-align: center;
+
+      h3 {
+        padding-top: 16px;
+      }
+
+      p {
+        color: $font-color-content;
+        padding-top: 16px;
+      }
+
+      .error-icon {
+        color: $background-red;
+      }
+    }
+
+  }
+}
+
+

@@ -1,0 +1,64 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import 'variables';
+@import 'reset';
+
+/******************************
+    Basic variables
+******************************/
+$font-size-xxxl: 28px;
+$font-size-xxl: 24px;
+$font-size-xl: 20px;
+$font-size-l: 18px;
+$font-size-base: 16px;
+$font-size-s: 14px;
+$font-size-sm: 12px;
+
+$font-color-title: #333;
+$font-color-content: #666;
+$font-color-remark: #999;
+
+$background-blue: #4284f5;
+$background-red: #f5222d;
+$background-green: #52c41a;
+$background-gray: #314659;
+$background-black: #000000;
+$background-white: #ffffff;
+$background-border: #E6E7E8;
+$background-shadow: rgba(0, 0, 0, 0.3);
+
+/******************************
+    Public style
+******************************/
+
+.hover-font:hover {
+  color: $background-blue !important;
+}
+.hover-box:hover {
+  box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.2);
+}
+
+.hi-panel:hover {
+  box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.2);
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+

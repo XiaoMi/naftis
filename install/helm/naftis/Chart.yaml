@@ -1,0 +1,4 @@
+apiVersion: v1
+description: An awesome dashboard for Istio build with love
+name: naftis
+version: 0.1.0

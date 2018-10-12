@@ -1,0 +1,77 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+div,a,p{
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+}
+
+.CTree-wrap {
+  font-size: 14px;
+  color: #666666;
+
+  .CTree-item {
+    cursor: pointer;
+    padding-left: 20px;
+  }
+
+  .item-content {
+    position: relative;
+    height: 28px;
+    line-height: 28px;
+  }
+
+  .content-word {
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    padding: 0 6px;
+  }
+
+  .word-choose {
+    background: #e3e3e3;
+    border-radius: 2px;
+  }
+
+  .item-dot {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: -20px;
+    top: 0;
+    height: 28px;
+    width: 20px;
+
+    .item-strangle {
+      border-left: 6px solid #314659;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-right: 6px solid transparent;
+      transform: translateX(3px);
+    }
+
+    .item-open {
+      transform: rotate(90deg);
+      transform-origin: 4px 6px;
+    }
+  }
+
+
+  .item-child {
+  }
+}
+
+

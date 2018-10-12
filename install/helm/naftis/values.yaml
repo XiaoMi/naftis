@@ -1,0 +1,43 @@
+## Configurations for reloader container in naftis-api
+reloader:
+  image:
+    repository: nghialv2607/k8s-config-reloader
+    tag: v0.1.0
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 20m
+      memory: 32Mi
+api:
+  image:
+    repository: sevennt/naftis-api
+    tag: latest
+    pullPolicy: IfNotPresent
+  log:
+    level: info
+  cache:
+    size: 100
+  retrieval:
+    scrapeInterval: 10s
+    scrapeTimeout: 8s
+  replicaCount: 1
+  service:
+    externalPort: 80
+    internalPort: 50000
+  storage:
+    class: standard
+    size: 5Gi
+    retention: 24h
+  config:
+ui:
+  service:
+    externalPort: 80
+    internalPort: 80
+  replicaCount: 1
+  image:
+    repository: sevennt/naftis-ui
+    tag: latest
+    pullPolicy: IfNotPresent

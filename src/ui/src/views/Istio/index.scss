@@ -1,0 +1,64 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import '../../commons/common.scss';
+
+.Diagnosis-wrap {
+  font-size: $font-size-s;
+
+  .Diagnosis-top-wrap {
+    padding: 16px 32px 20px 32px;
+    margin-bottom: 24px;
+    background: url('https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png') center center no-repeat;
+    background-color: $background-white;
+    background-size: 168px 100px;
+
+    h2 {
+      padding-bottom: 20px;
+    }
+
+    p {
+      padding-bottom: 14px;
+    }
+
+    .istio-file {
+      cursor: pointer;
+      height: 24px;
+      line-height: 24px;
+      padding-left: 30px;
+      text-decoration: none;
+      outline: none;
+      background: url('https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg') no-repeat 0 0;
+
+      a {
+        color: $background-blue;
+      }
+    }
+  }
+
+  .panel-content {
+    overflow-x: auto;
+  }
+
+  .component-status {
+    background: $background-white;
+    margin-bottom: 24px;
+  }
+
+  .pods-status {
+    background: $background-white;
+  }
+}
+
+

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+data:
+  config: |-
+{{ .Values.api.config | indent 4}}
+metadata:
+  name: naftis-config
+  namespace: {{ .Release.Namespace }}
+  selfLink: /api/v1/namespaces/{{ .Release.Namespace }}/configmaps/naftis-config

@@ -1,0 +1,89 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import '../../commons/common.scss';
+
+html, body, #app {
+  height: 100%;
+}
+
+.login-user{
+  height: 100%;
+  width: 100%;
+  background:url('./../../assets/sailing.jpg') no-repeat center;
+  background-size: cover;
+  padding-right: 0 !important;
+}
+
+.login-shadow{
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background: rgba(240, 242, 245, 0.2);
+}
+
+.login-pannel{
+  width: 400px;
+  box-shadow: 0 0 10px $background-shadow;
+  background: rgba(255,255,255,0.2);
+  position: absolute;
+  right: 20%;
+  top: 20%;
+  padding: 30px 50px;
+  box-sizing: border-box;
+
+  h2{
+    color: #333;
+    padding: 20px 0 20px 60px;
+    font-size: 40px;
+    background: url('./../../assets/logo.png') 0px 18px no-repeat;
+    background-size: 50px 50px;
+    margin: 0;
+  }
+
+  .login-desc {
+    text-align: center;
+    font-size: $font-size-s;
+    color: $font-color-remark;
+    padding-bottom: 20px;
+  }
+
+  button{
+    width: 100%;
+  }
+
+  .lost-password {
+    cursor: pointer;
+    float: right;
+    color: $background-blue
+  }
+
+  p{
+    text-align: center;
+  }
+
+  .form-item {
+    padding-bottom: 20px;
+  }
+
+  .hi-input__inner {
+
+    .hi-input__fix-box {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+    }
+  }
+}

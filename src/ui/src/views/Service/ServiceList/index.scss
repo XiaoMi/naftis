@@ -1,0 +1,216 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import '../../../commons/common.scss';
+
+.service-wrap {
+  color: $font-color-content;
+  font-size: $font-size-s;
+
+  .service-center-wrap {
+    padding-bottom: 40px;
+    font-size: $font-color-title;
+
+    .service-top-wrap {
+      position: relative;
+      display: flex;
+      padding: 32px 32px 10px 32px;
+      margin-bottom: 24px;
+      background-color: $background-white;
+      background-image: none;
+      justify-content: flex-start;
+    }
+    .service-detail-right{
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between
+    }
+    .panel-content {
+      padding-bottom: 0;
+    }
+    .fl-status {
+      font-size: 20px;
+      color: #1da653
+    }
+    .service-detail-left {
+      width: 260px;
+      margin-right: 40px;
+      h2 {
+        padding-bottom: 20px;
+        color: $font-color-title;
+      }
+
+      p {
+        padding-bottom: 12px;
+        color: $font-color-content;
+      }
+    }
+    .service-detail {
+      min-width: 200px;
+      margin-right: 40px;
+      h2 {
+        padding-bottom: 20px;
+        color: $font-color-title;
+      }
+
+      p {
+        padding-bottom: 12px;
+        color: $font-color-content;
+      }
+    }
+
+    .service-action {
+      text-align: right;
+
+      .apply-method {
+        padding-bottom: 70px;
+      }
+
+      .apply-status {
+        display: inline-block;
+        vertical-align: middle;
+        color: $font-color-content;
+
+        .status-run {
+          float: right;
+
+        }
+
+        .status-num {
+          padding-left: 20px;
+          float: right;
+        }
+
+        .status-title, .num-title{
+          padding-bottom: 12px;
+        }
+
+        .status-content {
+          font-size: 20px;
+          font-weight: bold;
+          color: #52c41a;
+        }
+
+        .num-content {
+          font-size: 20px;
+          font-weight: bold;
+          color: $font-color-title;
+        }
+      }
+    }
+
+    .only-service {
+      p {
+        height: 30px;
+        line-height: 30px;
+      }
+
+      .apply-method {
+        padding-bottom: 15px;
+      }
+    }
+
+    .pagi-wrap {
+      padding-top: 10px;
+
+      .pagi-wrap-float {
+        float: right;
+      }
+
+      &:after {
+        content:'';
+        height:0;
+        line-height:0;
+        display:block;
+        visibility:hidden;
+        clear:both;
+      }
+    }
+
+    .navMenu-wrap {
+      background: none;
+    }
+
+    .component-servicegraph {
+      background: $background-white;
+      margin-bottom: 24px;
+    }
+
+  
+
+    .component-status {
+      background: $background-white;
+      margin-bottom: 24px;
+    }
+
+    .pods-status {
+      background: $background-white;
+    }
+  }
+
+  .grapha{
+    height: 180px;
+    svg{
+      width: 100% !important;
+      height: 100%;
+    }
+  }
+
+  .colorRed {
+    color: $background-red;
+  }
+
+
+
+  .empty-content {
+    color: $font-color-content;
+    font-size: $font-size-l;
+    text-align: center;
+    padding: 300px 0 30px;
+  }
+}
+
+.task-temp {
+  .temp-top-wrap {
+    padding: 16px 32px 20px 32px;
+    margin-bottom: 24px;
+    background: url('https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png') center center no-repeat;
+    background-color: $background-white;
+    background-size: 195px 130px;
+
+    h2 {
+      padding-bottom: 20px;
+    }
+
+    p {
+      padding-bottom: 14px;
+    }
+
+    .istio-file {
+      cursor: pointer;
+      height: 24px;
+      line-height: 24px;
+      padding-left: 30px;
+      text-decoration: none;
+      outline: none;
+      background: url('https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg') no-repeat 0 0;
+
+      a {
+        color: $background-blue;
+      }
+    }
+  }
+}
+

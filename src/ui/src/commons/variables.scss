@@ -1,0 +1,85 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//
+// --------------------------------------------------
+
+// XMFE global variable
+// --------------------------------------------------
+
+@function r($px) {
+  @return round($px * 1000 / 32 ) / 1500 * 1rem;
+}
+
+// Grey system
+$black: #000;
+$blackLight: #2e2323;
+$grayDark: #666;
+$gray: #888;
+$grayLight: #ccc;
+$whitegray: #fbfbfb;
+$white: #fff;
+$red: #f00;
+$borderColor:#DFE0E0;
+// Emphasis color system
+$orange: #ff6600;
+
+// Link color
+// -------------------------
+$linkColor: $blackLight;
+$linkColorHover: $orange;
+$linkDarkColor: $orange;
+$linkDarkColorHover: $orange;
+
+// font about
+// -------------------------
+$sansFontFamily: arial, "Hiragino Sans GB", "Microsoft Yahei";
+$serifFontFamily: Georgia, "Times New Roman", Times, serif;
+$appleFontFamily: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+$baseLH: 1.5;
+
+// button font
+// -------------------------
+// 以FONTSIZE:14PX && LIN-HEIGHT 20PX 为基础;
+$baseFontS: 0.8125rem;
+$smallFontS: 0.75rem;
+
+// button
+// -------------------------
+$btnBackground: #f4f4f4;
+$btnBorderColor: #ddd;
+
+$btnPrimaryBackground: #ff6700;
+$btnPrimaryBackgroundHover: #dc5800;
+$btnPrimaryBackgroundActive: #dc5800;
+
+$btnWhiteBackground: $white;
+$btnWhiteBackgroundHover: #f8f8f8;
+$btnWhiteBackgroundActive: #f8f8f8;
+
+// Input placeholder
+// -------------------------
+$placeholderText: $grayLight;
+
+// base color
+$blue: #0075cb;
+$create: #81ddd1;
+$edit: #c5df83;
+$examine: #ff3498;
+$search: #ffa360;
+$green: #5cb85c;
+$greenDark: #418341;
+
+// min-width
+$minWidth: 1260px;

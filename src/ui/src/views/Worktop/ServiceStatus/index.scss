@@ -1,0 +1,114 @@
+// Copyright 2018 Naftis Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import '../../../commons/common.scss';
+
+.service-wrap {
+  .col-item-wrap {
+    width: 100%;
+    background: $background-white;
+
+    .hi-panel {
+      padding-bottom: 0;
+
+      .col-panel-num {
+        margin-top: 0;
+
+        & > p {
+          line-height: 32px;
+          font-size: $font-size-s;
+        }
+      }
+
+      .panel-content {
+        padding-top: 0;
+        border-top: none
+      }
+
+      .trend-text-green {
+        margin-left: 16px;
+
+        .trend-text-icon {
+          transform: translateY(6px);
+          border-top: 6px solid $background-green;
+          border-right: 6px solid transparent;
+          border-bottom: 6px solid transparent;
+          border-left: 6px solid transparent;
+        }
+      }
+    }
+  }
+
+  .trend-text-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 4px;
+    border-top: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid $background-red;
+    border-left: 6px solid transparent;
+  }
+
+  .service-top-wrap {
+    margin-bottom: 24px;
+  }
+
+  .navMenu-wrap {
+    background: $background-white;
+  }
+
+  .ranking-list {
+    .ranking-item {
+      display: flex;
+      height: 40px;
+      font-size: $font-size-s;
+      line-height: 40px;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid $background-border;
+
+      .ranking-num {
+        display: inline-block;
+        vertical-align: middle;
+        font-weight: bold;
+        height: 20px;
+        width: 20px;
+        font-size: $font-size-sm;
+        text-align: center;
+        line-height: 20px;
+        border-radius: 10px;
+        background-color: $background-border;
+        color: $font-color-content;
+        margin-right: 12px;
+      }
+
+      .item-active {
+        background-color: $background-gray;
+        color: $background-white;
+      }
+    }
+  }
+
+  .use-lever .hi-panel{
+    height: 100%;
+    overflow-y: auto;
+    margin-left: 22px;
+  }
+
+  .hi-nav-menu-list {
+    padding: 0 24px;
+  }
+}
+
