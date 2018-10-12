@@ -1,8 +1,8 @@
 # Naftis
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/xiaomi/naftis/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://micode.be.xiaomi.com/info-arch/naftis/blob/master/LICENSE)
 
-[中文](https://github.com/xiaomi/naftis/blob/master/README-CN.md) | [English](https://github.com/xiaomi/naftis/blob/master/README.md)
+[中文](https://micode.be.xiaomi.com/info-arch/naftis/blob/master/README-CN.md) | [English](https://micode.be.xiaomi.com/info-arch/naftis/blob/master/README.md)
 
 Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来帮助用户更方便地执行 Istio 任务。
 用户可以在 Naftis 中定义自己的任务模板，并填充变量来构造单个或多个构造任务实例，从而完成各种服务治理功能。
@@ -123,6 +123,13 @@ Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来�
 
 - Istio > 1.0
 - Kubernetes >= 1.9.0
+- HIUI >= 1.0.0
+
+### HIUI
+
+Naftis 前端 UI 使用由小米前端组开源的 React 组件 HIUI 构建，参考：
+
+https://github.com/XiaoMi/hiui
 
 ## 快速开始
 
@@ -152,28 +159,16 @@ istio-system   Active    18m
 $ kubectl apply -n naftis -f mysql.yaml
 
 # 确认 MySQL 已部署
-NAME                           READY     STATUS    RESTARTS   AGE
-naftis-mysql-c78f99d6c-kblbq   0/1       Running   0          9s
-naftis-mysql-test              1/1       Running   0          10s
 
 # 部署 Naftis API 和 UI 服务
 kubectl apply -n naftis -f naftis.yaml
 
 # 确认 Naftis 所有的服务已经正确定义并正常运行中
 kubectl get svc -n naftis
-NAME           TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-naftis-api     ClusterIP      10.233.3.144    <none>        50000/TCP      7s
-naftis-mysql   ClusterIP      10.233.57.230   <none>        3306/TCP       55s
-naftis-ui      LoadBalancer   10.233.18.125   <pending>     80:31286/TCP   6s
 
 kubectl get pod -n naftis
-NAME                           READY     STATUS    RESTARTS   AGE
-naftis-api-0                   1/2       Running   0          19s
-naftis-mysql-c78f99d6c-kblbq   1/1       Running   0          1m
-naftis-mysql-test              1/1       Running   0          1m
-naftis-ui-69f7d75f47-4jzwz     1/1       Running   0          19s
 
-# 通过端口转发的方式访问 Naftis
+# 端口转发访问 Naftis 
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 
 # 打开浏览器，访问 http://localhost:8080 即可。默认用户名和密码分别为 admin、admin。
@@ -294,7 +289,7 @@ Naftis 的 API 和 UI 镜像已经发布到 Docker Hub 上，见 [api](https://h
 ### 获取源码
 
 ```bash
-go get github.com/xiaomi/naftis
+go get micode.be.xiaomi.com/info-arch/naftis
 ```
 
 ### 配置环境变量

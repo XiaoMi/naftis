@@ -15,6 +15,7 @@ Using Naftis we can custom our own task templates, then build task from them and
   - [Code Structure](#code-structure)
   - [Features](#features)
   - [Requirements](#requirements)
+    - [HIUI](#hiui)
   - [Quick Started](#quick-started)
   - [Detailed Deployments](#detailed-deployments)
     - [Running Under Kubernetes Cluster](#running-under-kubernetes-cluster)
@@ -120,6 +121,13 @@ Using Naftis we can custom our own task templates, then build task from them and
 
 * Istio > 1.0
 * Kubernetes >= 1.9.0
+* HIUI >= 1.0.0
+
+### HIUI
+
+Naftis dashboard use powerful HIUI (A React based UI components which released by Xiaomi FE Team) to built responsive UI, more reference:
+
+https://github.com/XiaoMi/hiui
 
 ## Quick Started
 
