@@ -10,4 +10,4 @@ namespace=""
         path="naftis-api.log"
         level="Debug"
 [db]
-    default="user:password@tcp(host:port)/istio_admin?charset=utf8&parseTime=True&loc=Local" # TODO replace MySQL DSN with your own
+    default="user:password@tcp(host:port)/naftis?charset=utf8&parseTime=True&loc=Local" # TODO replace MySQL DSN with your own
