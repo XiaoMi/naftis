@@ -137,7 +137,7 @@ kubectl create namespace naftis && kubectl apply -n naftis -f mysql.yaml && kube
 # port forward Naftis
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 
-# explorer http://localhost:8080/ with your browser. Default user name and password is "admin".
+# explorer http://localhost:8080/ with your browser, default user name and password is "admin".
 ```
 
 ## Detailed Deployments
@@ -182,15 +182,15 @@ naftis-ui-69f7d75f47-4jzwz     1/1       Running   0          19s
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 ```
 
-Explorer http://localhost:8080/ with your browser, then have fun with it. Default user name and password is "admin".
+Explorer http://localhost:8080/ with your browser, default user name and password is "admin".
 
 ### Running Under Local Machine
 
 #### Migration
 
 ```bash
-# run migrate.sql
-mysql> source migrate.sql;
+# run migrate sql script
+mysql> source ./tool/naftis.sql;
 
 # modify in-local.toml and replace with your own MySQL DSN.
 ```

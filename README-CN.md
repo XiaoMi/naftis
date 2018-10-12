@@ -181,7 +181,7 @@ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o j
 
 ```bash
 # 执行 sql 语句
-mysql> source naftis.sql;
+mysql> source ./tool/naftis.sql;
 
 # 将 in-local.toml 中的数据库的 DSN 替换成本地 MySQL 实例的 DSN。
 ```
