@@ -1,8 +1,8 @@
 # Naftis
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://micode.be.xiaomi.com/info-arch/naftis/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/xiaomi/naftis/blob/master/LICENSE)
 
-[中文](https://micode.be.xiaomi.com/info-arch/naftis/blob/master/README-CN.md) | [English](https://micode.be.xiaomi.com/info-arch/naftis/blob/master/README.md)
+[中文](https://github.com/xiaomi/naftis/blob/master/README-CN.md) | [English](https://github.com/xiaomi/naftis/blob/master/README.md)
 
 Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来帮助用户更方便地执行 Istio 任务。
 用户可以在 Naftis 中定义自己的任务模板，并填充变量来构造单个或多个构造任务实例，从而完成各种服务治理功能。
@@ -302,7 +302,7 @@ Naftis 的 API 和 UI 镜像已经发布到 Docker Hub 上，见 [api](https://h
 ### 获取源码
 
 ```bash
-go get micode.be.xiaomi.com/info-arch/naftis
+go get github.com/xiaomi/naftis
 ```
 
 ### 配置环境变量
