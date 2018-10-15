@@ -206,7 +206,7 @@ mysql> source ./tool/naftis.sql;
 make build && ./bin/naftis-api start -c config/in-local.toml
 ```
 
-or
+或
 
 ```bash
 ./run
@@ -218,7 +218,7 @@ or
 GOOS=darwin GOARCH=amd64 make build && ./bin/naftis-api start -c config/in-local.toml
 ```
 
-or
+或
 
 ```bash
 GOOS=darwin GOARCH=amd64 ./run
