@@ -160,14 +160,26 @@ istio-system   Active    18m
 $ kubectl apply -n naftis -f mysql.yaml
 
 # 确认 MySQL 已部署
+NAME                           READY     STATUS    RESTARTS   AGE
+naftis-mysql-c78f99d6c-kblbq   0/1       Running   0          9s
+naftis-mysql-test              1/1       Running   0          10s
 
 # 部署 Naftis API 和 UI 服务
 kubectl apply -n naftis -f naftis.yaml
 
 # 确认 Naftis 所有的服务已经正确定义并正常运行中
 kubectl get svc -n naftis
+NAME           TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+naftis-api     ClusterIP      10.233.3.144    <none>        50000/TCP      7s
+naftis-mysql   ClusterIP      10.233.57.230   <none>        3306/TCP       55s
+naftis-ui      LoadBalancer   10.233.18.125   <pending>     80:31286/TCP   6s
 
 kubectl get pod -n naftis
+NAME                           READY     STATUS    RESTARTS   AGE
+naftis-api-0                   1/2       Running   0          19s
+naftis-mysql-c78f99d6c-kblbq   1/1       Running   0          1m
+naftis-mysql-test              1/1       Running   0          1m
+naftis-ui-69f7d75f47-4jzwz     1/1       Running   0          19s
 
 # 端口转发访问 Naftis 
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
