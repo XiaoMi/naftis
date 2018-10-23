@@ -74,9 +74,9 @@ Using Naftis we can custom our own task templates, then build task from them and
 │   │   ├── version             # provides build-in version message
 │   │   ├── worker              # task worker
 │   │   └── main.go             # index of backend server
-│   └── ui                      # fronentend source code
+│   └── ui                      # frontend source code
 │       ├── build               # webpack scripts
-│       ├── src                 # truly fronentend source code
+│       ├── src                 # truly frontend source code
 │       ├── package.json
 │       ├── package-lock.json
 │       ├── postcss.config.js
@@ -88,7 +88,7 @@ Using Naftis we can custom our own task templates, then build task from them and
 │   ├── build.sh
 │   ├── clean.sh                # clean up Naftis 
 │   ├── conn.sh
-│   ├── genmanifest.go          # generate manifest for Naftis depolyment in Kubernetes
+│   ├── genmanifest.go          # generate manifest for Naftis deployment in Kubernetes
 │   ├── gentmpl.go
 │   ├── naftis.sql              # Naftis migrate sql scripts
 │   ├── naftis.conf             # Naftis Nginx configuration file
