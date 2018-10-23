@@ -375,4 +375,4 @@ helm template install/helm/naftis --name naftis --namespace naftis > naftis.yaml
 
 ## License
 
-Apache License 2.0(https://github.com/xiaomi/naftis/blob/master/LICENSE)
+[Apache License 2.0](https://github.com/xiaomi/naftis/blob/master/LICENSE)
