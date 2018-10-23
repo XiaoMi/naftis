@@ -154,7 +154,7 @@ $ kubectl create namespace naftis
 # 确认 Naftis 命名空间已创建
 $ kubectl get namespace naftis
 NAME           STATUS    AGE
-istio-system   Active    18m
+naftis         Active    18m
 
 # 部署 Naftis MySQL服务
 $ kubectl apply -n naftis -f mysql.yaml
