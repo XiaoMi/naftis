@@ -359,3 +359,7 @@ make push       # push images to docker.io
 - [ ] Add testcases
 - [ ] Supporting query Istio resource
 - [ ] Add Links of Grafana, Jaeger, Prometheus
+
+## License
+
+Apache License 2.0(https://github.com/xiaomi/naftis/blob/master/LICENSE)

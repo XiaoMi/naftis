@@ -372,3 +372,7 @@ helm template install/helm/naftis --name naftis --namespace naftis > naftis.yaml
 - [ ] 添加测试用例
 - [ ] 支持 Istio 资源查询
 - [ ] 添加 Grafana, Jaeger, Prometheus 链接入口
+
+## License
+
+Apache License 2.0(https://github.com/xiaomi/naftis/blob/master/LICENSE)
