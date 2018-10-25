@@ -8,6 +8,7 @@ Naftis is a web-based dashboard for Istio. It helps user manage their Istio task
 Using Naftis we can custom our own task templates, then build task from them and execute it.
 
 ## Dockmentation
+
 <!-- TOC -->
 
 - [Naftis](#naftis)
@@ -44,6 +45,7 @@ Using Naftis we can custom our own task templates, then build task from them and
   - [Other Directives](#other-directives)
   - [Architecture](#architecture)
   - [TODO List](#todo-list)
+  - [License](#license)
 
 <!-- /TOC -->
 
@@ -86,9 +88,9 @@ Using Naftis we can custom our own task templates, then build task from them and
 │   ├── img
 │   ├── apppkg.sh
 │   ├── build.sh
-│   ├── clean.sh                # clean up Naftis 
+│   ├── cleanup.sh              # clean up Naftis
 │   ├── conn.sh
-│   ├── genmanifest.go          # generate manifest for Naftis deployment in Kubernetes
+│   ├── genmanifest.sh          # generate manifest for Naftis deployment in Kubernetes
 │   ├── gentmpl.go
 │   ├── naftis.sql              # Naftis migrate sql scripts
 │   ├── naftis.conf             # Naftis Nginx configuration file
@@ -119,9 +121,9 @@ Using Naftis we can custom our own task templates, then build task from them and
 
 ## Requirements
 
-* Istio > 1.0
-* Kubernetes >= 1.9.0
-* HIUI >= 1.0.0
+- Istio > 1.0
+- Kubernetes >= 1.9.0
+- HIUI >= 1.0.0
 
 ### HIUI
 
@@ -144,7 +146,7 @@ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o j
 
 ### Running Under Kubernetes Cluster
 
-```
+```bash
 # create Naftis namespace
 $ kubectl create namespace naftis
 
@@ -157,21 +159,22 @@ naftis         Active    18m
 $ kubectl apply -n naftis -f mysql.yaml
 
 # ensure MySQL service is deployed
+$ kubectl get svc -n naftis
 NAME                           READY     STATUS    RESTARTS   AGE
-naftis-mysql-c78f99d6c-kblbq   0/1       Running   0          9s
+naftis-mysql-c78f99d6c-kblbq   1/1       Running   0          9s
 naftis-mysql-test              1/1       Running   0          10s
 
 # deploy Naftis API and UI service
-kubectl apply -n naftis -f naftis.yaml
+$ kubectl apply -n naftis -f naftis.yaml
 
 # ensure Naftis all services is correctly defined and running
-kubectl get svc -n naftis
+$ kubectl get svc -n naftis
 NAME           TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 naftis-api     ClusterIP      10.233.3.144    <none>        50000/TCP      7s
 naftis-mysql   ClusterIP      10.233.57.230   <none>        3306/TCP       55s
 naftis-ui      LoadBalancer   10.233.18.125   <pending>     80:31286/TCP   6s
 
-kubectl get pod -n naftis
+$ kubectl get pod -n naftis
 NAME                           READY     STATUS    RESTARTS   AGE
 naftis-api-0                   1/2       Running   0          19s
 naftis-mysql-c78f99d6c-kblbq   1/1       Running   0          1m
@@ -179,10 +182,10 @@ naftis-mysql-test              1/1       Running   0          1m
 naftis-ui-69f7d75f47-4jzwz     1/1       Running   0          19s
 
 # browse Naftis via port-forward
-kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
+$ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 ```
 
-Explorer http://localhost:8080/ with your browser, default user name and password is "admin".
+Explorer [http://localhost:8080/](http://localhost:8080/) with your browser, default user name and password is "admin".
 
 ### Running Under Local Machine
 
@@ -284,7 +287,6 @@ npm run dev # start node proxy
 
 Naftis api and ui image has been published on Docker Hub in [api](https://hub.docker.com/r/sevennt/naftis-api/) and [ui](https://hub.docker.com/r/sevennt/naftis-ui/).
 
-
 ## Developer's Guide
 
 ### Fetch source code
@@ -327,22 +329,23 @@ dep ensure -v # install dependcies
 ## Other Directives
 
 ```bash
-make                 # make with all targets
-make build           # build api binaries, frontend assets, and Kubernetes manifest
-make build.api       # build backend binaries
-make build.ui        # build frontend assets
-make build.manifest  # build Kubernetes manifest
+make                # make all targets
 
-make fmt    # go fmt codes
-make lint   # lint codes
-make vet    # vet codes
-make test   # run tests
-make tar    # compress directories
+make build          # build api binaries, frontend assets, and Kubernetes manifest
+make build.api      # build backend binaries
+make build.ui       # build frontend assets
+make build.manifest # build Kubernetes manifest
 
-make docker     # build docker images
-make docker.api # build backend docker images
-make docker.ui  # build frontend docker images
-make push       # push images to docker.io
+make fmt  # go fmt codes
+make lint # lint codes
+make vet  # vet codes
+make test # run tests
+make tar  # compress directories
+
+make docker      # build docker images
+make docker.api  # build backend docker images
+make docker.ui   # build frontend docker images
+make push        # push images to docker.io
 
 ./bin/naftis-api -h      # show help messages
 ./bin/naftis-api version # show binary build version messages

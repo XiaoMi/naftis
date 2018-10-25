@@ -87,7 +87,7 @@ Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来�
 │   ├── img
 │   ├── apppkg.sh
 │   ├── build.sh
-│   ├── clean.sh                # 清理 Naftis 
+│   ├── cleanup.sh              # 清理 Naftis
 │   ├── conn.sh
 │   ├── genmanifest.go          # 生成 Kubernetes 部署清单
 │   ├── gentmpl.go
@@ -181,7 +181,7 @@ naftis-mysql-c78f99d6c-kblbq   1/1       Running   0          1m
 naftis-mysql-test              1/1       Running   0          1m
 naftis-ui-69f7d75f47-4jzwz     1/1       Running   0          19s
 
-# 端口转发访问 Naftis 
+# 端口转发访问 Naftis
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 
 # 打开浏览器，访问 http://localhost:8080 即可。默认用户名和密码分别为 admin、admin。
@@ -339,16 +339,18 @@ dep ensure -v # 安装 Go 依赖
 ## 其他指令
 
 ```bash
-make build           # 编译 Go 二进制文件、前端静态资源、Kubernetes 清单
-make build.api       # 编译 Go 二进制文件
-make build.ui        # 编译前端静态资源
-make build.manifest  # 编译 Kubernetes 清单
+make                # 编译所有 targets
 
-make fmt    # 格式化 Go 代码
-make lint   # lint Go 代码
-make vet    # vet Go 代码
-make test   # 运行测试用例
-make tar    # 打包成压缩文件
+make build          # 编译 Go 二进制文件、前端静态资源、Kubernetes 清单
+make build.api      # 编译 Go 二进制文件
+make build.ui       # 编译前端静态资源
+make build.manifest # 编译 Kubernetes 清单
+
+make fmt  # 格式化 Go 代码
+make lint # lint Go 代码
+make vet  # vet Go 代码
+make test # 运行测试用例
+make tar  # 打包成压缩文件
 
 make docker     # 编译 docker 镜像
 make docker.api # 编译后端 docker 镜像
@@ -360,7 +362,7 @@ make push       # 把镜像推送到 Docker Hub
 
 helm template install/helm/naftis --name naftis --namespace naftis > naftis.yaml # 本地渲染 Kubernetes 清单
 
-./tool/cleanup.sh # 清理已部署的 Naftis 
+./tool/cleanup.sh # 清理已部署的 Naftis
 ```
 
 ## 架构
