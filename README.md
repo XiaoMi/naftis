@@ -7,7 +7,7 @@
 Naftis is a web-based dashboard for Istio. It helps user manage their Istio tasks more easily.
 Using Naftis we can custom our own task templates, then build task from them and execute it.
 
-## Dockmentation
+## Documentation
 
 <!-- TOC -->
 
