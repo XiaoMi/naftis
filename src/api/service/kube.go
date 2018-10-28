@@ -22,12 +22,14 @@ import (
 
 	"github.com/xiaomi/naftis/src/api/log"
 	"github.com/xiaomi/naftis/src/api/util"
-
 	"github.com/spf13/viper"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	"istio.io/istio/pilot/pkg/serviceregistry/kube"
+	"istio.io/istio/pilot/pkg/kube/inject"
+	"github.com/ghodss/yaml"
 )
 
 var (
@@ -65,7 +67,7 @@ func InitKube() {
 	}
 
 	ServiceInfo = newKubeInfo(viper.GetString("namespace"), time.Second*5)
-	IstioInfo = newKubeInfo("istio-system", time.Second*5)
+	IstioInfo = newKubeInfo(kube.IstioNamespace, time.Second*5)
 
 	// start sync service info
 	go ServiceInfo.sync()
@@ -288,4 +290,49 @@ func (k *kubeInfo) sync() {
 
 		time.Sleep(k.syncInterval)
 	}
+}
+
+// get mesh's config from k8s
+func (k *kubeInfo) GetMeshConfigFromConfigMap() (string, error) {
+
+	config, err := client.CoreV1().ConfigMaps(kube.IstioNamespace).Get(kube.IstioConfigMap, metav1.GetOptions{})
+	if err != nil {
+		return "", fmt.Errorf("could not read valid configmap %q from namespace  %q: %v - ensure valid MeshConfig exists",
+			"istio", kube.IstioNamespace, err)
+	}
+	// get mesh config
+	configYaml, exists := config.Data["mesh"]
+	if !exists {
+		return "", fmt.Errorf("missing configuration map key %q", "mesh")
+	}
+
+	return configYaml, nil
+}
+
+
+
+
+//get inject's config from k8s
+func (k *kubeInfo) GetInjectConfigFromConfigMap() (string, error) {
+
+	config, err := client.CoreV1().ConfigMaps(kube.IstioNamespace).Get("istio-sidecar-injector", metav1.GetOptions{})
+	if err != nil {
+		return "", fmt.Errorf("could not find valid configmap %q from namespace  %q: %v - "+
+			"ensure istio-inject configmap exists",
+			"istio-sidecar-injector", kube.IstioNamespace, err)
+	}
+
+	//get inject's config
+	injectData, exists := config.Data["config"]
+	if !exists {
+		return "", fmt.Errorf("missing configuration map key %q in %q",
+			"config", "istio-sidecar-injector")
+	}
+	var injectConfig inject.Config
+	if err := yaml.Unmarshal([]byte(injectData), &injectConfig); err != nil {
+		return "", fmt.Errorf("unable to convert data from configmap %q: %v",
+			"istio-sidecar-injector", err)
+	}
+
+	return injectConfig.Template, nil
 }

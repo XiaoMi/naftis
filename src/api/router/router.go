@@ -59,6 +59,9 @@ func Init(e *gin.Engine) {
 	api.DELETE("/tasktmpls/:id", handler.DeleteTaskTmpls)
 	api.GET("/tasktmpls/:id/vars", handler.ListTaskTmplVars)
 
+	api.GET("/inject/file", handler.InjectToFile)
+
+
 	hub := handler.NewHub()
 	go hub.Run()
 	e.GET("/ws", func(c *gin.Context) {
