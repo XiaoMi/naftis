@@ -203,7 +203,7 @@ mysql> source ./tool/naftis.sql;
 - Linux
 
 ```bash
-make build && ./bin/naftis-api start -c config/in-local.toml # building and starting naftis-api
+make build && ./bin/naftis-api start -c config/in-local.toml -i=false # building and starting naftis-api
 ```
 
 or
@@ -215,7 +215,7 @@ or
 - Mac OS
 
 ```bash
-GOOS=darwin GOARCH=amd64 make build && ./bin/naftis-api start -c config/in-local.toml # building and starting naftis-api
+GOOS=darwin GOARCH=amd64 make build && ./bin/naftis-api start -c config/in-local.toml -i=false # building and starting naftis-api
 ```
 
 or
