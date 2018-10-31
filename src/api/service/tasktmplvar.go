@@ -33,11 +33,19 @@ var mockVersions = []string{
 func (taskTmplVar) Get(name, title, comment, dataSource string, formType, tasktmplID uint, ids []uint) []model.TaskTmplVar {
 	vars := db.GetTaskTmplVar(name, title, comment, dataSource, formType, tasktmplID, ids)
 	for i := range vars {
+		// parse datasource variable, return specific datasource map
 		switch strings.ToLower(vars[i].DataSource) {
 		case "host":
 			data := make(map[string]string)
 			svcs := ServiceInfo.Services("").Exclude("kube-system", "istio-system", "naftis")
 			for _, s := range svcs {
+				data[s.Name] = s.Name
+			}
+			vars[i].Data = data
+		case "namespace":
+			data := make(map[string]string)
+			ns := ServiceInfo.Namespaces("").Exclude("kube-system", "istio-system", "naftis")
+			for _, s := range ns {
 				data[s.Name] = s.Name
 			}
 			vars[i].Data = data

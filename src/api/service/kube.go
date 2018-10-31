@@ -40,6 +40,7 @@ var (
 type kubeInfo struct {
 	mtx          *sync.RWMutex
 	services     []v1.Service
+	namespaces   []v1.Namespace
 	syncInterval time.Duration
 	namespace    string
 }
@@ -82,6 +83,7 @@ func newKubeInfo(namespace string, syncInterval time.Duration) *kubeInfo {
 }
 
 type services []v1.Service
+type namespaces []v1.Namespace
 
 func (p services) Exclude(namespaces ...string) services {
 	namespacesM := make(map[string]bool)
@@ -114,6 +116,39 @@ func (k *kubeInfo) Services(uid string) services {
 		}
 	}
 	return ret
+}
+
+func (k *kubeInfo) Namespaces(namespace string) namespaces {
+	k.mtx.RLock()
+	defer k.mtx.RUnlock()
+
+	if namespace == "" {
+		return k.namespaces
+	}
+
+	ret := make([]v1.Namespace, 0)
+	for _, n := range k.namespaces {
+		if string(n.Namespace) == namespace {
+			ret = append(ret, n)
+			break
+		}
+	}
+	return ret
+}
+
+func (n namespaces) Exclude(namespaces ...string) namespaces {
+	namespacesM := make(map[string]bool)
+	for _, n := range namespaces {
+		namespacesM[n] = true
+	}
+
+	retNamespaces := make([]v1.Namespace, 0)
+	for _, v := range n {
+		if _, ok := namespacesM[v.Name]; !ok {
+			retNamespaces = append(retNamespaces, v)
+		}
+	}
+	return retNamespaces
 }
 
 // KubeServiceStatus defines services' status of specific service.
@@ -273,6 +308,7 @@ func (k *kubeInfo) Tree() []Tree {
 	return t
 }
 
+// sync syncs services data from Kubernetes periodically.
 func (k *kubeInfo) sync() {
 	for {
 		svcs, err := client.CoreV1().Services(k.namespace).List(metav1.ListOptions{
@@ -280,10 +316,18 @@ func (k *kubeInfo) sync() {
 		})
 		if err != nil {
 			// panic(err.Error())
-			log.Error("[k8s] init error", "err", err)
+			log.Error("[k8s] get services err", "err", err)
+		}
+		ns, err := client.CoreV1().Namespaces().List(metav1.ListOptions{
+			LabelSelector: "provider!=kubernetes",
+		})
+		if err != nil {
+			// panic(err.Error())
+			log.Error("[k8s] get namespaces err", "err", err)
 		}
 		k.mtx.Lock()
 		k.services = svcs.Items
+		k.namespaces = ns.Items
 		k.mtx.Unlock()
 
 		time.Sleep(k.syncInterval)
