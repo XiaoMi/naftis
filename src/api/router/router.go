@@ -61,7 +61,7 @@ func Init(e *gin.Engine) {
 
 	openApi := e.Group("/open-api")
 	openApi.POST("/inject/file", handler.InjectToFile)
-	openApi.POST("/inject/context", handler.Context)
+	openApi.POST("/inject/context", handler.Content)
 
 	hub := handler.NewHub()
 	go hub.Run()

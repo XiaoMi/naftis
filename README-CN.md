@@ -117,6 +117,7 @@ Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来�
 - 提供查看 Istio 的 Services 和 Pod 的支持
 - 开箱即用，通过 Kubectl 相关指令即可快速部署
 - 支持 Istio 1.0
+- api 注入接口
 
 ## 依赖
 
@@ -292,6 +293,20 @@ Dashboard 页面集成了一些常用的图表，比如请求成功率、4XX请�
 
 Istio 诊断页面可以查看 Istio Service 和 Pod 状态。
 ![查看Istio状态](./tool/img/Naftis-istio.png)
+
+#### API注入
+
+- 上传文件
+
+```
+curl -F "config=@bookinfo.yaml" http://localhost:8080/openapi/inject/file
+```
+
+- POST 内容
+
+```
+curl -X POST --data-binary @bookinfo.yaml -H "Content-type: text/yaml" http://localhost:8080/open-api/inject/content
+```
 
 ## Docker 镜像
 

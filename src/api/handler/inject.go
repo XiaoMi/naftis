@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -69,19 +68,8 @@ func InjectToFile(c *gin.Context) {
 	inject.IntoResourceFile(injectConfig, meshConfig, reader, c.Writer)
 }
 
-// curl -X POST --data-binary @bookinfo.yaml -H "Content-type: text/yaml" http://localhost:50000/open-api/inject/context
-func Context(c *gin.Context) {
-	data, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.Writer.Write([]byte(err.Error() + "\n"))
-		c.Writer.Flush()
-	}
-
-	if string(data) == "" {
-		c.Writer.Write([]byte(ErrEmptyBody.Error() + "\n"))
-		c.Writer.Flush()
-	}
-
+// curl -X POST --data-binary @bookinfo.yaml -H "Content-type: text/yaml" http://localhost:50000/open-api/inject/content
+func Content(c *gin.Context) {
 	meshConfig, err := service.IstioInfo.GetMeshConfigFromConfigMap()
 	if err != nil {
 		c.Writer.Write([]byte(err.Error() + "\n"))
@@ -94,5 +82,9 @@ func Context(c *gin.Context) {
 		c.Writer.Flush()
 	}
 
-	inject.IntoResourceFile(injectConfig, meshConfig, c.Request.Body, c.Writer)
+	err = inject.IntoResourceFile(injectConfig, meshConfig, c.Request.Body, c.Writer)
+	if err != nil {
+		c.Writer.Write([]byte(err.Error() + "\n"))
+		c.Writer.Flush()
+	}
 }
