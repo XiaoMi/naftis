@@ -1,7 +1,7 @@
 mode="debug"
 istioctl="/user/bin/istioctl"
 namespace=""
-upload_tmp="/data/www/upload_tmp"
+upload_tmp="/data/www/upload_tmp/"
 [logger]
     [logger.console]
         color=true

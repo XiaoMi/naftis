@@ -1,33 +1,46 @@
 package handler
 
 import (
-	"os"
+	"errors"
 	"io"
-	"github.com/xiaomi/naftis/src/api/service"
+	"io/ioutil"
+	"os"
+
 	"github.com/gin-gonic/gin"
-	"mime/multipart"
 	"github.com/spf13/viper"
+	"github.com/xiaomi/naftis/src/api/service"
 	"istio.io/istio/pilot/pkg/kube/inject"
-	"istio.io/istio/pilot/pkg/model"
 )
 
-// curl -F "config=@bookinfo.yaml" http://localhost:50000/inject/file
+var (
+	// ErrEmptyConfig is returned when request contains invalid config
+	ErrEmptyConfig = errors.New("invalid config")
+	// ErrEmptyBody is returned when request body is empty
+	ErrEmptyBody = errors.New("empty body")
+)
+
+//curl -F "config=@bookinfo.yaml" http://localhost:50000/open-api/inject/file
 func InjectToFile(c *gin.Context) {
-	// istio config 's file
+	// istio config
 	file, err := c.FormFile("config")
 	if err != nil {
-		c.Writer.Write([]byte(err.Error()+ "\n"))
+		c.Writer.Write([]byte(err.Error() + "\n"))
+		c.Writer.Flush()
+	}
+
+	if file == nil {
+		c.Writer.Write([]byte(ErrEmptyConfig.Error() + "\n"))
 		c.Writer.Flush()
 	}
 
 	tmp_path := viper.GetString("upload_tmp") + file.Filename
-	defer func (){
+	defer func() {
 		os.Remove(tmp_path)
 	}()
 
-	err = saveUploadedFile(file, tmp_path)
+	err = c.SaveUploadedFile(file, tmp_path)
 	if err != nil {
-		c.Writer.Write([]byte(err.Error()+ "\n"))
+		c.Writer.Write([]byte(err.Error() + "\n"))
 		c.Writer.Flush()
 	}
 
@@ -36,44 +49,50 @@ func InjectToFile(c *gin.Context) {
 
 	in, err = os.Open(tmp_path)
 	if err != nil {
-		c.Writer.Write([]byte(err.Error()+ "\n"))
+		c.Writer.Write([]byte(err.Error() + "\n"))
 		c.Writer.Flush()
 	}
 	reader = in
 
-	configYaml, err := service.IstioInfo.GetMeshConfigFromConfigMap()
+	meshConfig, err := service.IstioInfo.GetMeshConfigFromConfigMap()
 	if err != nil {
-		c.Writer.Write([]byte(err.Error()+ "\n"))
+		c.Writer.Write([]byte(err.Error() + "\n"))
 		c.Writer.Flush()
 	}
 
-	meshConfig,err := model.ApplyMeshConfigDefaults(configYaml)
-
-
 	injectConfig, err := service.IstioInfo.GetInjectConfigFromConfigMap()
 	if err != nil {
-		c.Writer.Write([]byte(err.Error()+ "\n"))
+		c.Writer.Write([]byte(err.Error() + "\n"))
 		c.Writer.Flush()
 	}
 
 	inject.IntoResourceFile(injectConfig, meshConfig, reader, c.Writer)
 }
 
-
-
-func saveUploadedFile(file *multipart.FileHeader, dst string) error {
-	src, err := file.Open()
+// curl -X POST --data-binary @bookinfo.yaml -H "Content-type: text/yaml" http://localhost:50000/open-api/inject/context
+func Context(c *gin.Context) {
+	data, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		return err
+		c.Writer.Write([]byte(err.Error() + "\n"))
+		c.Writer.Flush()
 	}
-	defer src.Close()
 
-	out, err := os.Create(dst)
+	if string(data) == "" {
+		c.Writer.Write([]byte(ErrEmptyBody.Error() + "\n"))
+		c.Writer.Flush()
+	}
+
+	meshConfig, err := service.IstioInfo.GetMeshConfigFromConfigMap()
 	if err != nil {
-		return err
+		c.Writer.Write([]byte(err.Error() + "\n"))
+		c.Writer.Flush()
 	}
-	defer out.Close()
 
-	io.Copy(out, src)
-	return nil
+	injectConfig, err := service.IstioInfo.GetInjectConfigFromConfigMap()
+	if err != nil {
+		c.Writer.Write([]byte(err.Error() + "\n"))
+		c.Writer.Flush()
+	}
+
+	inject.IntoResourceFile(injectConfig, meshConfig, c.Request.Body, c.Writer)
 }

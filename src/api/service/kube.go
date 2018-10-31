@@ -20,16 +20,18 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ghodss/yaml"
+	"github.com/spf13/viper"
 	"github.com/xiaomi/naftis/src/api/log"
 	"github.com/xiaomi/naftis/src/api/util"
-	"github.com/spf13/viper"
+	meshconfig "istio.io/api/mesh/v1alpha1"
+	"istio.io/istio/pilot/pkg/kube/inject"
+	"istio.io/istio/pilot/pkg/model"
+	"istio.io/istio/pilot/pkg/serviceregistry/kube"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-	"istio.io/istio/pilot/pkg/serviceregistry/kube"
-	"istio.io/istio/pilot/pkg/kube/inject"
-	"github.com/ghodss/yaml"
 )
 
 var (
@@ -293,24 +295,21 @@ func (k *kubeInfo) sync() {
 }
 
 // get mesh's config from k8s
-func (k *kubeInfo) GetMeshConfigFromConfigMap() (string, error) {
+func (k *kubeInfo) GetMeshConfigFromConfigMap() (*meshconfig.MeshConfig, error) {
 
 	config, err := client.CoreV1().ConfigMaps(kube.IstioNamespace).Get(kube.IstioConfigMap, metav1.GetOptions{})
 	if err != nil {
-		return "", fmt.Errorf("could not read valid configmap %q from namespace  %q: %v - ensure valid MeshConfig exists",
+		return nil, fmt.Errorf("could not read valid configmap %q from namespace  %q: %v - ensure valid MeshConfig exists",
 			"istio", kube.IstioNamespace, err)
 	}
 	// get mesh config
 	configYaml, exists := config.Data["mesh"]
 	if !exists {
-		return "", fmt.Errorf("missing configuration map key %q", "mesh")
+		return nil, fmt.Errorf("missing configuration map key %q", "mesh")
 	}
 
-	return configYaml, nil
+	return model.ApplyMeshConfigDefaults(configYaml)
 }
-
-
-
 
 //get inject's config from k8s
 func (k *kubeInfo) GetInjectConfigFromConfigMap() (string, error) {
