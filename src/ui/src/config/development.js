@@ -18,7 +18,7 @@ module.exports = {
   HOST: 'http://localhost:5200/',
   ISTIO_LANG_KEY: 'en-US',
   WEBPACK_PROXY: {
-    '/api': 'http://www.naftis.com/',
-    '/prometheus': 'http://www.naftis.com/'
+    '/api': 'http://localhost:50000', // if your api server has been proxied by nginx or other web server, replace this host with your proxy configuration host.
+    '/prometheus': 'http://localhost:9090' // port forward your prometheus, and then replace this host with your exported prometheus's host.
   }
 }
