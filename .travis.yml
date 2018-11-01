@@ -1,0 +1,15 @@
+matrix:
+  include:
+  - language: go
+    go:
+    - 1.11.x
+    before_script:
+    - mv ../../XiaoMi ../../xiaomi
+    - cd ../../xiaomi/naftis
+    script:
+    - make build.api
+  - language: node_js
+    node_js:
+    - 8
+    script:
+    - make build.ui

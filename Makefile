@@ -83,7 +83,7 @@ build.manifest:
 
 build.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making build.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@cd $(UI) && npm run build && cp -r dist $(BASE_PATH)/
+	@cd $(UI) && npm i && npm run build && cp -r dist $(BASE_PATH)/
 	@echo -e "\n"
 
 docker: docker.api docker.ui

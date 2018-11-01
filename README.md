@@ -1,6 +1,7 @@
 # Naftis
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/xiaomi/naftis/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/XiaoMi/naftis.svg?branch=master)](https://travis-ci.org/XiaoMi/naftis)
 
 [English](https://github.com/xiaomi/naftis/blob/master/README.md) | [中文](https://github.com/xiaomi/naftis/blob/master/README-CN.md)
 
