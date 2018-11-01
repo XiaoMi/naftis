@@ -4,7 +4,7 @@ matrix:
     go:
     - 1.11.x
     before_script:
-    - mv ../../XiaoMi/naftis ../../xiaomi/naftis
+    - mv ../../XiaoMi ../../xiaomi
       cd ../../xiaomi/naftis
     script:
     - make build.api
