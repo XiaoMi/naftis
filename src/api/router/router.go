@@ -59,6 +59,10 @@ func Init(e *gin.Engine) {
 	api.DELETE("/tasktmpls/:id", handler.DeleteTaskTmpls)
 	api.GET("/tasktmpls/:id/vars", handler.ListTaskTmplVars)
 
+	openApi := e.Group("/open-api")
+	openApi.POST("/kube-inject/file", handler.InjectToFile)
+	openApi.POST("/kube-inject/context", handler.InjectToContent)
+
 	hub := handler.NewHub()
 	go hub.Run()
 	e.GET("/ws", func(c *gin.Context) {

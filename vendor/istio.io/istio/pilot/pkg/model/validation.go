@@ -406,10 +406,6 @@ func validateServer(server *networking.Server) (errs error) {
 		errs = appendErrors(errs, fmt.Errorf("server config must contain at least one host"))
 	} else {
 		for _, host := range server.Hosts {
-			// short name hosts are not allowed in gateways
-			if host != "*" && !strings.Contains(host, ".") {
-				errs = appendErrors(errs, fmt.Errorf("short names (non FQDN) are not allowed in Gateway server hosts"))
-			}
 			if err := ValidateWildcardDomain(host); err != nil {
 				errs = appendErrors(errs, err)
 			}
@@ -1675,8 +1671,8 @@ func ValidateServiceEntry(name, namespace string, config proto.Message) (errs er
 	}
 
 	if cidrFound {
-		if serviceEntry.Resolution != networking.ServiceEntry_NONE && serviceEntry.Resolution != networking.ServiceEntry_STATIC {
-			errs = appendErrors(errs, fmt.Errorf("CIDR addresses are allowed only for NONE/STATIC resolution types"))
+		if serviceEntry.Resolution != networking.ServiceEntry_NONE {
+			errs = appendErrors(errs, fmt.Errorf("CIDR addresses are allowed only for NONE resolution types"))
 		}
 	}
 

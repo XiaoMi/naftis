@@ -118,6 +118,7 @@ Using Naftis we can custom our own task templates, then build task from them and
 - With diagnose data of Istio services and pods
 - Out of the box, easy deployment with `kubectl` commands
 - Istio 1.0 supported
+- HTTP version of kube-inject
 
 ## Requirements
 
@@ -282,6 +283,20 @@ npm run dev # start node proxy
 #### Istio Diagnosis
 
 ![Istio Diagnosis](./tool/img/Naftis-istio.png)
+
+#### HTTP version of kube-inject
+
+- Upload file
+
+```
+curl -F "config=@bookinfo.yaml" http://localhost:8080/open-api/kube-inject/file
+```
+
+- POST Content
+
+```
+curl -X POST --data-binary @bookinfo.yaml -H "Content-type: text/yaml" http://localhost:8080/open-api/kube-inject/content
+```
 
 ## Docker Images
 

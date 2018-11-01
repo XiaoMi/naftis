@@ -23,7 +23,12 @@ import (
 	"github.com/xiaomi/naftis/src/api/log"
 	"github.com/xiaomi/naftis/src/api/util"
 
+	"github.com/ghodss/yaml"
 	"github.com/spf13/viper"
+	meshconfig "istio.io/api/mesh/v1alpha1"
+	"istio.io/istio/pilot/pkg/kube/inject"
+	"istio.io/istio/pilot/pkg/model"
+	"istio.io/istio/pilot/pkg/serviceregistry/kube"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -332,4 +337,46 @@ func (k *kubeInfo) sync() {
 
 		time.Sleep(k.syncInterval)
 	}
+}
+
+// get mesh's config from k8s
+func (k *kubeInfo) GetMeshConfigFromConfigMap() (*meshconfig.MeshConfig, error) {
+
+	config, err := client.CoreV1().ConfigMaps(kube.IstioNamespace).Get(kube.IstioConfigMap, metav1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("could not read valid configmap %q from namespace  %q: %v - ensure valid MeshConfig exists",
+			"istio", kube.IstioNamespace, err)
+	}
+	// get mesh config
+	configYaml, exists := config.Data["mesh"]
+	if !exists {
+		return nil, fmt.Errorf("missing configuration map key %q", "mesh")
+	}
+
+	return model.ApplyMeshConfigDefaults(configYaml)
+}
+
+//get inject's config from k8s
+func (k *kubeInfo) GetInjectConfigFromConfigMap() (string, error) {
+
+	config, err := client.CoreV1().ConfigMaps(kube.IstioNamespace).Get("istio-sidecar-injector", metav1.GetOptions{})
+	if err != nil {
+		return "", fmt.Errorf("could not find valid configmap %q from namespace  %q: %v - "+
+			"ensure istio-inject configmap exists",
+			"istio-sidecar-injector", kube.IstioNamespace, err)
+	}
+
+	//get inject's config
+	injectData, exists := config.Data["config"]
+	if !exists {
+		return "", fmt.Errorf("missing configuration map key %q in %q",
+			"config", "istio-sidecar-injector")
+	}
+	var injectConfig inject.Config
+	if err := yaml.Unmarshal([]byte(injectData), &injectConfig); err != nil {
+		return "", fmt.Errorf("unable to convert data from configmap %q: %v",
+			"istio-sidecar-injector", err)
+	}
+
+	return injectConfig.Template, nil
 }

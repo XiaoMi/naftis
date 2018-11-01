@@ -37,6 +37,17 @@
   version = "v3.2.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:4ddc17aeaa82cb18c5f0a25d7c253a10682f518f4b2558a82869506eec223d76"
+  name = "github.com/docker/distribution"
+  packages = [
+    "digestset",
+    "reference",
+  ]
+  pruneopts = "NUT"
+  revision = "93e082742a009850ac46962150b2f652a822c5ff"
+
+[[projects]]
   digest = "1:4bf0f493170189b3f6d04d2ce31aa1f1d9f0bf6515b3b2d438e3f4af713df1aa"
   name = "github.com/dvwright/xss-mw"
   packages = ["."]
@@ -230,6 +241,14 @@
   revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
 
 [[projects]]
+  digest = "1:002e717d1aba87b3b5d85f50c7f4755679866edb6297a46679cbd2b7c74a084c"
+  name = "github.com/howeyc/fsnotify"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "441bbc86b167f3c1f4786afae9931403b99fdacf"
+  version = "v0.9.0"
+
+[[projects]]
   branch = "master"
   digest = "1:b7f860847a1d71f925ba9385ed95f1ebc0abfeb418a78e219ab61f48fdfeffad"
   name = "github.com/howeyc/gopass"
@@ -350,6 +369,22 @@
   pruneopts = "NUT"
   revision = "a96e63847dc3c67d17befa69c303767e2f84e54f"
   version = "v2.1"
+
+[[projects]]
+  digest = "1:e0cc8395ea893c898ff5eb0850f4d9851c1f57c78c232304a026379a47a552d0"
+  name = "github.com/opencontainers/go-digest"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "279bed98673dd5bef374d3b6e4b09e2af76183bf"
+  version = "v1.0.0-rc1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:61820d62888624679de099adf44bb6cf2fd55b7f9e8f4f8d320d9d9d28bee938"
+  name = "github.com/openshift/api"
+  packages = ["apps/v1"]
+  pruneopts = "NUT"
+  revision = "dca24d1902afee9d2be02425a2d7c9f910063631"
 
 [[projects]]
   digest = "1:51ea800cff51752ff68e12e04106f5887b4daec6f9356721238c28019f0b42db"
@@ -744,10 +779,12 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:1431f439693991e4ce19545b8b61cf969a2bcf2a23441bc258dfe373ee72cf51"
+  digest = "1:a2ef5a1d3ca3af54d7c2f7e56898721d36a31807ec6da42bc0623ecb5678cf84"
   name = "istio.io/istio"
   packages = [
+    "pilot/cmd",
     "pilot/pkg/config/kube/crd",
+    "pilot/pkg/kube/inject",
     "pilot/pkg/model",
     "pilot/pkg/model/test",
     "pilot/pkg/serviceregistry/kube",
@@ -756,7 +793,7 @@
     "pkg/log",
   ]
   pruneopts = "NUT"
-  revision = "a66a221bfe4cc068abad0c1fba93093600a5c6ef"
+  revision = "03d5b5722709baadaec6b504ec6d5514d950d787"
   version = "1.0.0-snapshot.2"
 
 [[projects]]
@@ -768,9 +805,10 @@
   revision = "5b04c5ff8bfc5f3d47a071815bc6fd90c28e352c"
 
 [[projects]]
-  digest = "1:41ef5a61ad194cdfb47dbdac3697743ca11b1d99360e8b12b1a7a44751717588"
+  digest = "1:1e22c9d898674522a6155619142b4691dd225441168faa2b5a4eb88ee327a243"
   name = "k8s.io/api"
   packages = [
+    "admission/v1beta1",
     "admissionregistration/v1alpha1",
     "admissionregistration/v1beta1",
     "apps/v1",
@@ -805,7 +843,7 @@
   version = "kubernetes-1.10.4"
 
 [[projects]]
-  digest = "1:370190d255066d9afd2b5349bb6fc919923c24c01e767cd3c572ed6b4848af2e"
+  digest = "1:87533cb11b8c26341bcd198cfb665959c2b56e3051d5713a4d5f90ccc24b8fc9"
   name = "k8s.io/apiextensions-apiserver"
   packages = [
     "pkg/apis/apiextensions",
@@ -813,6 +851,7 @@
     "pkg/client/clientset/clientset",
     "pkg/client/clientset/clientset/scheme",
     "pkg/client/clientset/clientset/typed/apiextensions/v1beta1",
+    "pkg/features",
   ]
   pruneopts = "NUT"
   revision = "8e7f43002fec5394a8d96ebca781aa9d4b37aaef"
@@ -864,6 +903,17 @@
   pruneopts = "NUT"
   revision = "17529ec7eadb8de8e7dc835201455f53571f655a"
   version = "kubernetes-1.10.4"
+
+[[projects]]
+  branch = "master"
+  digest = "1:e484e0c012a9e1a2a47cbb2684c7bf8ac755eeccb35f9196e70ebec07492dfb3"
+  name = "k8s.io/apiserver"
+  packages = [
+    "pkg/features",
+    "pkg/util/feature",
+  ]
+  pruneopts = "NUT"
+  revision = "768725318f6a6436f39454db1b0fe664e4de7535"
 
 [[projects]]
   branch = "release-7.0"
@@ -931,6 +981,31 @@
   pruneopts = "NUT"
   revision = "a312bfe35c401f70e5ea0add48b50da283031dc3"
 
+[[projects]]
+  digest = "1:5fe54ca58bdda5f4f85d2b641359ba245baa175a8c14e8c8cfffe2fe2e1c5a86"
+  name = "k8s.io/kubernetes"
+  packages = [
+    "pkg/apis/autoscaling",
+    "pkg/apis/core",
+    "pkg/apis/core/v1",
+    "pkg/apis/extensions",
+    "pkg/apis/networking",
+    "pkg/apis/policy",
+    "pkg/features",
+    "pkg/util/parsers",
+  ]
+  pruneopts = "NUT"
+  revision = "5ca598b4ba5abb89bb773071ce452e33fb66339d"
+  version = "v1.10.4"
+
+[[projects]]
+  branch = "master"
+  digest = "1:ff54706d46de40c865b5fcfc4bde1087c02510cd12e0150de8e405ab427d9907"
+  name = "k8s.io/utils"
+  packages = ["pointer"]
+  pruneopts = "NUT"
+  revision = "4c3feeb576b06ef8fea769809bd3db5e5e78dc23"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -953,9 +1028,12 @@
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
     "github.com/stretchr/testify/assert",
+    "istio.io/api/mesh/v1alpha1",
     "istio.io/fortio",
     "istio.io/istio/pilot/pkg/config/kube/crd",
+    "istio.io/istio/pilot/pkg/kube/inject",
     "istio.io/istio/pilot/pkg/model",
+    "istio.io/istio/pilot/pkg/serviceregistry/kube",
     "k8s.io/api/core/v1",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/client-go/kubernetes",
