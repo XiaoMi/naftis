@@ -58,6 +58,7 @@ func Init(e *gin.Engine) {
 	api.PUT("/tasktmpls/:id", handler.UpdateTaskTmpls)
 	api.DELETE("/tasktmpls/:id", handler.DeleteTaskTmpls)
 	api.GET("/tasktmpls/:id/vars", handler.ListTaskTmplVars)
+	api.GET("/kube/info", handler.Kubeinfo)
 
 	hub := handler.NewHub()
 	go hub.Run()

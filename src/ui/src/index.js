@@ -21,8 +21,13 @@ import Login from './views/Login'
 import configureStore from './redux/store'
 import { getLocaleLanguage } from './commons/languages'
 import './commons/common.scss'
+import * as socketAction from './redux/actions/socket'
 
 export const store = configureStore()
+
+if (window.localStorage.getItem('isLogin')) {
+  socketAction.connetctSocket()
+}
 
 if (module.hot) {
   module.hot.accept()

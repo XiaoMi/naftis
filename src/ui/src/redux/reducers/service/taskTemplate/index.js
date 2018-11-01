@@ -22,7 +22,8 @@ const initState = {
     brief: '',
     content: '',
     vars: []
-  }
+  },
+  kubeinfo: {}
 }
 
 export default (state = initState, action) => {
@@ -41,6 +42,9 @@ export default (state = initState, action) => {
     case TYPE.SET_ADD_DATA:
       let addData = JSON.parse(JSON.stringify(action.payload))
       return Object.assign({}, state, {submitParam: addData})
+    case TYPE.SERVICE_KUBE_LIST_DATA:
+      let kubeinfo = JSON.parse(JSON.stringify(action.payload))
+      return Object.assign({}, state, {kubeinfo: kubeinfo})
     default:
       return state
   }

@@ -42,7 +42,7 @@ func buildCmd(subCommand string, content string) string {
 
 var (
 	createTask = func(task *Task) (e error) {
-		e = db.AddTask(task.TaskTmplID, task.Content, task.Operator, task.ServiceUID, task.PrevState, task.Status)
+		e = db.AddTask(task.TaskTmplID, task.Content, task.Operator, task.ServiceUID, task.PrevState, task.Namespace, task.Status)
 		Push2TaskStatusCh(*task)
 		return
 	}

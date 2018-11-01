@@ -30,6 +30,11 @@ import (
 	istiomodel "istio.io/istio/pilot/pkg/model"
 )
 
+var (
+	// ErrTaskNotExists is returned when we can't find specific task from istio
+	ErrTaskNotExists = errors.New("task isn't exists")
+)
+
 type istiocrdExecutor struct {
 	client *crd.Client
 }
@@ -47,7 +52,7 @@ func NewCrdExecutor() Executor {
 
 var (
 	addTask = func(task *Task) (e error) {
-		e = db.AddTask(task.TaskTmplID, task.Content, task.Operator, task.ServiceUID, task.PrevState, task.Status)
+		e = db.AddTask(task.TaskTmplID, task.Content, task.Operator, task.ServiceUID, task.PrevState, task.Namespace, task.Status)
 		if e != nil {
 			log.Error("[executor] addTask fail", "err", e)
 		}
@@ -70,7 +75,7 @@ func (i *istiocrdExecutor) Execute(task Task) error {
 func (i *istiocrdExecutor) create(varr []istiomodel.Config, task *Task) (errs error) {
 	for _, config := range varr {
 		var err error
-		if config.Namespace, err = handleNamespaces(config.Namespace); err != nil {
+		if config.Namespace, err = handleNamespaces(task.Namespace); err != nil {
 			return err
 		}
 
@@ -93,15 +98,17 @@ func (i *istiocrdExecutor) replace(varr []istiomodel.Config, task *Task) (errs e
 
 	for _, config := range varr {
 		var err error
-		if config.Namespace, err = handleNamespaces(config.Namespace); err != nil {
+		// overwrite config.Namespace with user specified namespace
+		if config.Namespace, err = handleNamespaces(task.Namespace); err != nil {
 			return err
 		}
 
 		// fill up revision
 		if config.ResourceVersion == "" {
-			current, exists := i.client.Get(config.Type, config.Name, "default")
+			current, exists := i.client.Get(config.Type, config.Name, config.Namespace)
 			if !exists {
-				return
+				log.Error("Task not exists", "type", config.Type, "name", config.Name, "namespace", task.Namespace)
+				return ErrTaskNotExists
 			}
 			config.ResourceVersion = current.ResourceVersion
 			// clear resourceVersion for rollback
@@ -111,10 +118,10 @@ func (i *istiocrdExecutor) replace(varr []istiomodel.Config, task *Task) (errs e
 		var newRev string
 		if newRev, err = i.client.Update(config); err != nil {
 			// if the config create fail, break loop and return error
-			log.Info("Replace config fail", "config", config.Key(), "error", err)
+			log.Info("Replace config fail", "config", config.Key(), "error", err, "config", config)
 			return err
 		}
-		log.Info("Replace config success", "config", config.Key(), "revision", newRev)
+		log.Info("Replace config success", "config", config.Key(), "revision", newRev, "config", config)
 	}
 
 	return nil
@@ -209,9 +216,7 @@ func (i *istiocrdExecutor) apply(task Task, t taskDbHandler) (errs error) {
 	}
 
 	if err := i.create(varr, &task); err != nil {
-		if err = i.replace(varr, &task); err != nil {
-			return err
-		}
+		return i.replace(varr, &task)
 	}
 
 	return

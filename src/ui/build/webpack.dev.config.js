@@ -23,11 +23,12 @@ const getProxyConfig = () => {
   if (WEBPACK_PROXY) {
     Object.entries(WEBPACK_PROXY).forEach(proxyItem => {
       const proxyName = proxyItem[0]
-      const proxyUrl = proxyItem[1]
+      const cfg = proxyItem[1]
       result[proxyName] = {
-        target: proxyUrl,
+        target: cfg.target,
         changeOrigin: true,
-        secure: false
+        secure: false,
+        ws: cfg.ws || false
       }
     })
   }

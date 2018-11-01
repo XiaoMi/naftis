@@ -32,6 +32,7 @@ type taskPayload struct {
 	Content    string   `json:"content"`
 	ServiceUID string   `json:"serviceUID"`
 	VarMaps    []string `json:"varMaps"`
+	Namespace  string   `json:"namespace"`
 }
 
 var (
@@ -43,11 +44,16 @@ var (
 	ErrInvalidTmplID = errors.New("invalid tmplID")
 	// ErrInvalidCommand is returned when request contains invalid command
 	ErrInvalidCommand = errors.New("invalid command")
+	// ErrInvalidNamespace is returned when request contains invalid namespace
+	ErrInvalidNamespace = errors.New("invalid namespace")
 )
 
 func (t taskPayload) validate() (e error) {
 	if t.ServiceUID == "" {
 		return ErrInvalidServiceUID
+	}
+	if t.Namespace == "" {
+		return ErrInvalidNamespace
 	}
 	if t.Command == "" {
 		return ErrInvalidCommand
@@ -127,7 +133,7 @@ func AddTasks(c *gin.Context) {
 
 	// Execute rollback command.
 	if cmd := convertCmd(p.Command); cmd == int(model.Rollback) {
-		if e := service.Task.Add(0, cmd, p.Content, util.User(c).Name, p.ServiceUID); e != nil {
+		if e := service.Task.Add(0, cmd, p.Content, util.User(c).Name, p.ServiceUID, p.Namespace); e != nil {
 			util.OpFailFn(c, e)
 			return
 		}
@@ -164,7 +170,7 @@ func AddTasks(c *gin.Context) {
 	}
 
 	// feed task to worker
-	if e := service.Task.Add(p.TmplID, convertCmd(p.Command), content, util.User(c).Name, p.ServiceUID); e != nil {
+	if e := service.Task.Add(p.TmplID, convertCmd(p.Command), content, util.User(c).Name, p.ServiceUID, p.Namespace); e != nil {
 		util.OpFailFn(c, e)
 		return
 	}
