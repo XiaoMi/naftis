@@ -5,11 +5,13 @@ matrix:
     - 1.11.x
     before_script:
     - mv ../../XiaoMi ../../xiaomi
-      cd ../../xiaomi/naftis
+    - cd ../../xiaomi/naftis
     script:
     - make build.api
   - language: node_js
     node_js:
     - 8.10.x
+    before_script:
+    - nvm install 8.10.x
     script:
     - make build.ui
