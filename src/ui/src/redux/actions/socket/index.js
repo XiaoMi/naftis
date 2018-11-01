@@ -17,8 +17,8 @@ import { handleNotificate } from '@hi-ui/hiui/es/notification'
 import '@hi-ui/hiui/es/notification/style/index.js'
 import {store} from '../../../index'
 import {getHost} from '../../../commons/axios.js'
-const TIMEOUT1 = 3000
 
+const TIMEOUT1 = 3000
 const TYPE = {
   SET_SOCKET_OBJECT: 'SET_SOCKET_OBJECT',
   SET_SOCKET_DATA: 'SET_SOCKET_DATA',
@@ -44,8 +44,8 @@ const connetctSocket = () => {
     host = window.location.host
   }
 
-  let u = new URL(host)
-  const url = `ws://${u.host}/ws?access_token=${authToken}`
+  let matches = host.match(new RegExp('^(?:https?:)?(?:\/\/)?([^\/\?]+)'))
+  const url = `ws://${matches[1]}/ws?access_token=${authToken}`
   const ws = new Sockette(url, {
     timeout: 5e3,
     maxAttempts: 10,
