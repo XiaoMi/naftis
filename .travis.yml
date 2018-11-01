@@ -1,0 +1,12 @@
+matrix:
+  include:
+  - language: go
+    go:
+    - 1.11.x
+    script:
+    - make build.api
+  - language: node_js
+    node_js:
+    - 8.10.x
+    script:
+    - make build.ui
