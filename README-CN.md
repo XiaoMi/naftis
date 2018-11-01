@@ -36,6 +36,9 @@ Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来�
       - [新增模板](#新增模板)
       - [创建任务](#创建任务)
       - [Istio 诊断](#istio-诊断)
+    - [HTTP版本kube-inject](#HTTP版本kube-inject)
+       - [上传文件](#上传文件)
+       - [POST 内容](#POST-内容)
   - [Docker 镜像](#docker-镜像)
   - [开发者指南](#开发者指南)
     - [获取源码](#获取源码)
@@ -300,15 +303,15 @@ Dashboard 页面集成了一些常用的图表，比如请求成功率、4XX请�
 Istio 诊断页面可以查看 Istio Service 和 Pod 状态。
 ![查看Istio状态](./tool/img/Naftis-istio.png)
 
-#### HTTP版本的kube-inject
+### HTTP版本kube-inject
 
-- 上传文件
+#### 上传文件
 
 ```
 curl -F "config=@bookinfo.yaml" http://localhost:8080/open-api/kube-inject/file
 ```
 
-- POST 内容
+#### POST 内容
 
 ```
 curl -X POST --data-binary @bookinfo.yaml -H "Content-type: text/yaml" http://localhost:8080/open-api/kube-inject/content

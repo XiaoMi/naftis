@@ -36,6 +36,9 @@ Using Naftis we can custom our own task templates, then build task from them and
       - [Task New](#task-new)
       - [Create Task](#create-task)
       - [Istio Diagnosis](#istio-diagnosis)
+    - [HTTP version of kube-inject](#HTTP-version-of-kube-inject)
+      - [Upload File](#upload-file)
+      - [POST Content](#post-content)
   - [Docker Images](#docker-images)
   - [Developer's Guide](#developers-guide)
     - [Fetch source code](#fetch-source-code)
@@ -284,15 +287,15 @@ npm run dev # start node proxy
 
 ![Istio Diagnosis](./tool/img/Naftis-istio.png)
 
-#### HTTP version of kube-inject
+### HTTP version of kube-inject
 
-- Upload file
+#### Upload File
 
 ```
 curl -F "config=@bookinfo.yaml" http://localhost:8080/open-api/kube-inject/file
 ```
 
-- POST Content
+#### POST Content
 
 ```
 curl -X POST --data-binary @bookinfo.yaml -H "Content-type: text/yaml" http://localhost:8080/open-api/kube-inject/content
