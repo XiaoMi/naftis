@@ -28,6 +28,7 @@ import '@hi-ui/hiui/es/button/style'
 import '@hi-ui/hiui/es/notification/style/index.js'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/createTask'
+import * as TaskTemplateActions from '../../../redux/actions/service/taskTemplate'
 import { Task } from '../../../commons/consts'
 import * as socketAction from '../../../redux/actions/socket'
 import './index.scss'
@@ -42,7 +43,8 @@ class CreateTask extends Component {
       stepList: [
         {title: T('app.common.createTaskStep1')},
         {title: T('app.common.createTaskStep2')},
-        {title: T('app.common.createTaskStep3')}]
+        {title: T('app.common.createTaskStep3')}],
+      namespace: 'default'
     }
     this.canContinue = true
     this.tempItem = ''
@@ -59,6 +61,7 @@ class CreateTask extends Component {
       history.goBack()
     }
     this.props.setCreateTaskListData([])
+    this.props.getKubeInfoAjax()
     this.tempItem = location.query
     if (this.tempItem && this.tempItem.varMap && this.tempItem.varMap.length) {
       this.tempItem.varMap.map(item => {
@@ -137,6 +140,12 @@ class CreateTask extends Component {
     return columns
   }
 
+  changeNamespace = (namespace) => {
+    this.setState({
+      namespace: namespace
+    })
+  }
+
   /**
    * 【currentStep】is the step index
    *   0 === Fill in variables
@@ -144,7 +153,7 @@ class CreateTask extends Component {
    *   2 === Completed
    */
   renderCenter = () => {
-    const { createTaskList, currentStep, lastServiceItem, createStatus, socketData } = this.props
+    const { createTaskList, currentStep, lastServiceItem, createStatus, socketData, kubeinfo } = this.props
     return (
       <div className='create-center-wrap'>
         <div className='create-stepper'>
@@ -154,6 +163,41 @@ class CreateTask extends Component {
           />
         </div>
         <div className='create-task-content'>
+          {
+            currentStep === 0 ? <Panel key='namespace' title={<div className='col-panel-title'>Settings</div>}>
+              <div className='create-panel-content'>
+                <Form inline>
+                  <FormItem label='Namespace' key='namespace-formitem'>
+                    <Select
+                      mode='single' list={kubeinfo.namespaces}
+                      value={this.state.value}
+                      style={{margin: '4px 4px', width: '200px'}}
+                      onChange={(value) => {
+                        if (value) {
+                          this.changeNamespace(value.name)
+                        }
+                      }} />
+                  </FormItem>
+                </Form>
+              </div>
+            </Panel> : null
+          }
+          {
+            currentStep === 1 ? <Panel key='namespace' title={<div className='col-panel-title'>Settings</div>}>
+              <div className='create-panel-content'>
+                <Form inline>
+                  <FormItem label='Namespace' key='namespace-formitem'>
+                    <Select
+                      mode='single' list={kubeinfo.namespaces}
+                      value={this.state.value}
+                      style={{margin: '4px 4px', width: '200px'}}
+                      disabled='disabled'
+                    />
+                  </FormItem>
+                </Form>
+              </div>
+            </Panel> : null
+          }
           {
             currentStep === 0 ? <div className='create-task-form'>
               {
@@ -337,7 +381,8 @@ class CreateTask extends Component {
                   varMaps,
                   command: Task.command.APPLY,
                   tmplID: this.submitParam.tmplID,
-                  serviceUID: lastServiceItem.key
+                  serviceUID: lastServiceItem.key,
+                  namespace: this.state.namespace
                 }
                 this.props.submitCreateTempAjax(dataOptions, (res) => {
                   this.props.setCreateStatusData(res)
@@ -402,7 +447,8 @@ const mapStateToProps = state => ({
   createTaskList: state.createTask.createTaskList,
   createStatus: state.createTask.createStatus,
   lastServiceItem: state.serviceList.lastServiceItem,
-  socketData: state.socket.socketData
+  socketData: state.socket.socketData,
+  kubeinfo: state.taskTemplate.kubeinfo
 })
 
-export default connect(mapStateToProps, {...Actions, ...socketAction})(CreateTask)
+export default connect(mapStateToProps, {...Actions, ...TaskTemplateActions, ...socketAction})(CreateTask)

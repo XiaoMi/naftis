@@ -96,4 +96,5 @@ type Task struct {
 	TaskTmpl   TaskTmpl   `gorm:"ForeignKey:TaskTmplID"`
 	Command    TaskCmd    `json:"command"`
 	PrevState  string     `json:"prevState"`
+	Namespace  string     `json:"namespace"`
 }

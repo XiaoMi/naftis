@@ -15,7 +15,7 @@ api:
   image:
     repository: sevennt/naftis-api
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   log:
     level: info
   cache:
@@ -40,4 +40,4 @@ ui:
   image:
     repository: sevennt/naftis-ui
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always

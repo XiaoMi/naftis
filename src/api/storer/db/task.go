@@ -22,8 +22,8 @@ import (
 )
 
 // AddTask adds a record into `tasks`.
-func AddTask(tmplID uint, content, operator, serviceUID, prevState string, status uint) error {
-	if content == "" || operator == "" || serviceUID == "" {
+func AddTask(tmplID uint, content, operator, serviceUID, prevState, namespace string, status uint) error {
+	if content == "" || operator == "" || serviceUID == "" || namespace == "" {
 		return ErrInvalidParams
 	}
 
@@ -36,6 +36,7 @@ func AddTask(tmplID uint, content, operator, serviceUID, prevState string, statu
 		Status:     status,
 		ServiceUID: serviceUID,
 		PrevState:  prevState,
+		Namespace:  namespace,
 	}
 	if e := db.Create(&task).Error; e != nil {
 		log.Error("[service] AddTask fail", "error", e.Error(), "record", task)

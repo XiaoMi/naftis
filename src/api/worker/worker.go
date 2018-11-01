@@ -61,7 +61,7 @@ func Stop() {
 }
 
 // Feed adds new job to job queue.
-func Feed(tmplID uint, command int, content string, operator string, serviceUID string, revision uint) error {
+func Feed(tmplID uint, command int, content string, operator string, serviceUID, namespace string, revision uint) error {
 	select {
 	case <-w.block:
 		fmt.Println(`worker is terminating, cann't add job any more.'`)
@@ -74,6 +74,7 @@ func Feed(tmplID uint, command int, content string, operator string, serviceUID 
 			ServiceUID: serviceUID,
 			Revision:   revision,
 			Command:    model.TaskCmd(command),
+			Namespace:  namespace,
 		}
 		// push task with processing status into TaskStatusCh
 		t.Status = model.TaskStatusProcessing

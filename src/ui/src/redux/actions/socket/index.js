@@ -43,7 +43,9 @@ const connetctSocket = () => {
   if (host === '') {
     host = window.location.host
   }
-  const url = `ws://${host}/ws?access_token=${authToken}`
+
+  let u = new URL(host)
+  const url = `ws://${u.host}/ws?access_token=${authToken}`
   const ws = new Sockette(url, {
     timeout: 5e3,
     maxAttempts: 10,

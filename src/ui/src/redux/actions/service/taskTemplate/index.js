@@ -16,6 +16,7 @@ import axios from '../../../../commons/axios'
 
 const TYPE = {
   SERVICE_TEMPLATE_LIST_DATA: 'SERVICE_TEMPLATE_LIST_DATA',
+  SERVICE_KUBE_LIST_DATA: 'SERVICE_KUBE_LIST_DATA',
   SERVICE_MODULE_LIST_DATA: 'SERVICE_MODULE_LIST_DATA',
   SERVICE_ADD_PARAM_DATA: 'SERVICE_ADD_PARAM_DATA',
   SET_ADD_DATA: 'SET_ADD_DATA'
@@ -50,6 +51,34 @@ const getServiceTemplateDataAjax = () => {
           dispatch({
             type: TYPE.SERVICE_TEMPLATE_LIST_DATA,
             payload: response.data
+          })
+        }
+      })
+  }
+}
+
+const getKubeInfoAjax = () => {
+  return dispatch => {
+    axios
+      .getAjax({
+        url: 'api/kube/info',
+        type: 'GET',
+        data: ''
+      })
+      .then(response => {
+        if (response.code === 0) {
+          let ns = []
+          if (response.data.namespaces && response.data.namespaces.length) {
+            response.data.namespaces.map((item, index) => {
+              ns.push({
+                id: index,
+                name: item
+              })
+            })
+          }
+          dispatch({
+            type: TYPE.SERVICE_KUBE_LIST_DATA,
+            payload: {namespaces: ns}
           })
         }
       })
@@ -121,5 +150,6 @@ export {
   setModuleListData,
   setAddParamData,
   getTemplateDetailDataAjax,
+  getKubeInfoAjax,
   TYPE
 }

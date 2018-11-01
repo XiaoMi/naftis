@@ -64,3 +64,18 @@ func Pods(c *gin.Context) {
 		"data": service.ServiceInfo.PodsByName(name).Exclude("kube-system", "istio-system", "naftis").Status(),
 	})
 }
+
+// Kubeinfo returns data like namespaces of Kubernetes.
+func Kubeinfo(c *gin.Context) {
+	var ns = service.ServiceInfo.Namespaces("").Exclude("kube-system", "istio-system", "naftis")
+	var retNs = make([]string, 0)
+	for _, n := range ns {
+		retNs = append(retNs, n.Name)
+	}
+	c.JSON(200, gin.H{
+		"code": 0,
+		"data": map[string]interface{}{
+			"namespaces": retNs,
+		},
+	})
+}

@@ -18,7 +18,15 @@ module.exports = {
   HOST: 'http://localhost:5200/',
   ISTIO_LANG_KEY: 'en-US',
   WEBPACK_PROXY: {
-    '/api': 'http://localhost:50000', // if your api server has been proxied by nginx or other web server, replace this host with your proxy configuration host.
-    '/prometheus': 'http://localhost:9090' // port forward your prometheus, and then replace this host with your exported prometheus's host.
+    '/api': {
+      target: 'http://localhost:50000'
+    }, // if your api server has been proxied by nginx or other web server, replace this host with your proxy configuration host.
+    '/ws': {
+      target: 'ws://localhost:50000',
+      ws: true
+    }, // if your api server has been proxied by nginx or other web server, replace this host with your proxy configuration host.
+    '/prometheus': {
+      target: 'http://localhost:9090' // port forward your prometheus, and then replace this host with your exported prometheus's host.
+    }
   }
 }

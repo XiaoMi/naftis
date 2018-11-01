@@ -29,8 +29,8 @@ func (task) Get(name, content, operator, serviceUID string, id uint, ctmin, ctma
 	return db.GetTask(name, content, operator, serviceUID, id, ctmin, ctmax, revision)
 }
 
-func (task) Add(tmplID uint, command int, content, operator, serviceUID string) error {
-	return worker.Feed(tmplID, command, content, operator, serviceUID, 1)
+func (task) Add(tmplID uint, command int, content, operator, serviceUID, namespace string) error {
+	return worker.Feed(tmplID, command, content, operator, serviceUID, namespace, 1)
 }
 
 // Deprecated: the function is already Deprecated.
