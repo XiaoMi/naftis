@@ -93,6 +93,11 @@ docker.api:
 	@docker build -t $(HUB)/naftis-api:latest -f ./Dockerfile.api .
 	@echo -e "\n"
 
+docker.apidebug:
+	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.apidebug<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	@docker build -t $(HUB)/naftis-api:latest -f ./Dockerfile.api_debug .
+	@echo -e "\n"
+
 docker.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker build -t $(HUB)/naftis-ui:latest -f ./Dockerfile.ui .

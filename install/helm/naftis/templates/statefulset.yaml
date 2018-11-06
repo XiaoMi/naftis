@@ -23,6 +23,7 @@ spec:
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
           args:
             - --config=/etc/naftis/config/config.toml
+            - --istioNamespace=istio-system
           ports:
             - containerPort: {{ .Values.api.service.internalPort }}
           livenessProbe:

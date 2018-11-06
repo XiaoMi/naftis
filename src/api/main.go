@@ -60,6 +60,8 @@ func init() {
 		"Start server with provided port")
 	startCmd.PersistentFlags().BoolVarP(&bootstrap.Args.InCluster, "inCluster", "i", true,
 		"Start server in kube cluster")
+	startCmd.PersistentFlags().StringVarP(&bootstrap.Args.IstioNamespace, "istioNamespace", "I", "istio-system",
+		"Start server with provided deployed Istio namespace")
 
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(version.Command())

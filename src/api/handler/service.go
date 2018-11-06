@@ -15,6 +15,7 @@
 package handler
 
 import (
+	"github.com/xiaomi/naftis/src/api/bootstrap"
 	"github.com/xiaomi/naftis/src/api/service"
 	"github.com/xiaomi/naftis/src/api/util"
 
@@ -28,7 +29,7 @@ func Services(c *gin.Context) {
 		uid := c.Param("uid")
 		c.JSON(200, gin.H{
 			"code": 0,
-			"data": service.ServiceInfo.Services(uid).Exclude("kube-system", "istio-system", "naftis").Status(),
+			"data": service.ServiceInfo.Services(uid).Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace).Status(),
 		})
 		return
 	}
@@ -61,13 +62,13 @@ func Pods(c *gin.Context) {
 	name := c.Param("name")
 	c.JSON(200, gin.H{
 		"code": 0,
-		"data": service.ServiceInfo.PodsByName(name).Exclude("kube-system", "istio-system", "naftis").Status(),
+		"data": service.ServiceInfo.PodsByName(name).Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace).Status(),
 	})
 }
 
 // Kubeinfo returns data like namespaces of Kubernetes.
 func Kubeinfo(c *gin.Context) {
-	var ns = service.ServiceInfo.Namespaces("").Exclude("kube-system", "istio-system", "naftis")
+	var ns = service.ServiceInfo.Namespaces("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)
 	var retNs = make([]string, 0)
 	for _, n := range ns {
 		retNs = append(retNs, n.Name)

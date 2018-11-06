@@ -1,7 +1,6 @@
-FROM alpine:3.5
+FROM scratch
 
-RUN mkdir -p /usr/app/naftis/bin
-COPY bin/naftis-api /usr/app/naftis/bin/
+ADD bin/naftis-api /usr/app/naftis/bin/
 
 EXPOSE 50000
 

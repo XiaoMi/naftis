@@ -38,12 +38,17 @@ type prom struct {
 }
 
 const (
-	localPromURL = "http://localhost:9090"
-	istioPromURL = "http://prometheus.istio-system:9090"
+	localPromURL    = "http://localhost:9090"
+	istioPromURLFmt = "http://prometheus.%s:9090"
+)
+
+var (
+	istioPromURL = ""
 )
 
 // InitProm initializes prometheus service.
 func InitProm() {
+	istioPromURL = fmt.Sprintf(istioPromURLFmt, bootstrap.Args.IstioNamespace)
 	addr := localPromURL
 	if bootstrap.Args.InCluster {
 		addr = istioPromURL

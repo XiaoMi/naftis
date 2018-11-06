@@ -1,6 +1,5 @@
 mode="debug"
 istioctl="/user/bin/istioctl"
-namespace=""
 [logger]
     [logger.console]
         color=true
