@@ -17,6 +17,7 @@ package service
 import (
 	"strings"
 
+	"github.com/xiaomi/naftis/src/api/bootstrap"
 	"github.com/xiaomi/naftis/src/api/model"
 	"github.com/xiaomi/naftis/src/api/storer/db"
 )
@@ -37,14 +38,14 @@ func (taskTmplVar) Get(name, title, comment, dataSource string, formType, tasktm
 		switch strings.ToLower(vars[i].DataSource) {
 		case "host":
 			data := make(map[string]string)
-			svcs := ServiceInfo.Services("").Exclude("kube-system", "istio-system", "naftis")
+			svcs := ServiceInfo.Services("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)
 			for _, s := range svcs {
 				data[s.Name] = s.Name
 			}
 			vars[i].Data = data
 		case "namespace":
 			data := make(map[string]string)
-			ns := ServiceInfo.Namespaces("").Exclude("kube-system", "istio-system", "naftis")
+			ns := ServiceInfo.Namespaces("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)
 			for _, s := range ns {
 				data[s.Name] = s.Name
 			}

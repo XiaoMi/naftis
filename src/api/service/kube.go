@@ -16,14 +16,15 @@ package service
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/xiaomi/naftis/src/api/bootstrap"
 	"github.com/xiaomi/naftis/src/api/log"
 	"github.com/xiaomi/naftis/src/api/util"
 
-	"github.com/spf13/viper"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -65,8 +66,16 @@ func InitKube() {
 		return
 	}
 
-	ServiceInfo = newKubeInfo(viper.GetString("namespace"), time.Second*5)
-	IstioInfo = newKubeInfo("istio-system", time.Second*5)
+	ServiceInfo = newKubeInfo("", time.Second*5)
+	IstioInfo = newKubeInfo(bootstrap.Args.IstioNamespace, time.Second*5)
+
+	// init Naftis namespace
+	b, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace") // just pass the file name
+	if err != nil || string(b) == "" {
+		log.Info("[k8s] get Naftis namespace fail or get empty namespace, use `naftis` by default", "err", err, "namespace", string(b))
+		bootstrap.Args.Namespace = "naftis"
+	}
+	bootstrap.Args.Namespace = string(b)
 
 	// start sync service info
 	go ServiceInfo.sync()
@@ -287,7 +296,7 @@ type Tree struct {
 }
 
 func (k *kubeInfo) Tree() []Tree {
-	services := k.Services("").Exclude("kube-system", "istio-system", "naftis")
+	services := k.Services("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)
 	t := make([]Tree, 0, len(services))
 	for _, i := range services {
 		pods := k.Pods(i.Spec.Selector)

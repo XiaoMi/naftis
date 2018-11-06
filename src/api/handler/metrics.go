@@ -15,6 +15,7 @@
 package handler
 
 import (
+	"github.com/xiaomi/naftis/src/api/bootstrap"
 	"github.com/xiaomi/naftis/src/api/service"
 
 	"github.com/gin-gonic/gin"
@@ -25,8 +26,8 @@ func ListMetrics(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"code": 0,
 		"data": map[string]interface{}{
-			"serviceCount": len(service.ServiceInfo.Services("").Exclude("kube-system", "istio-system", "naftis")),
-			"podCount":     len(service.ServiceInfo.Pods(map[string]string{}).Exclude("kube-system", "istio-system", "naftis")),
+			"serviceCount": len(service.ServiceInfo.Services("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)),
+			"podCount":     len(service.ServiceInfo.Pods(map[string]string{}).Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)),
 		},
 	})
 }

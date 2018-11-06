@@ -1,5 +1,4 @@
 mode="debug"
-namespace=""
 [logger]
     [logger.console]
         color=true
