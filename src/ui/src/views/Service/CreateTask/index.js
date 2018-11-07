@@ -172,6 +172,7 @@ class CreateTask extends Component {
                   <FormItem label='Namespace' key='namespace-formitem'>
                     <Select
                       mode='single' list={kubeinfo.namespaces}
+                      searchable
                       value={this.state.value}
                       style={{margin: '4px 4px', width: '200px'}}
                       onChange={(value) => {
@@ -191,6 +192,7 @@ class CreateTask extends Component {
                   <FormItem label='Namespace' key='namespace-formitem'>
                     <Select
                       mode='single' list={kubeinfo.namespaces}
+                      searchable
                       value={this.state.value}
                       style={{margin: '4px 4px', width: '200px'}}
                       disabled='disabled'
@@ -252,6 +254,7 @@ class CreateTask extends Component {
                                   {
                                     v.type === Task.varFormType.SELECT && <Select
                                       mode='single' list={data}
+                                      searchable
                                       value={item[v.key]}
                                       style={{margin: '4px 4px', width: '200px'}}
                                       onChange={(value) => {
