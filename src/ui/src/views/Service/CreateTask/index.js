@@ -45,7 +45,8 @@ class CreateTask extends Component {
       stepList: [
         {title: T('app.common.createTaskStep1')},
         {title: T('app.common.createTaskStep2')},
-        {title: T('app.common.createTaskStep3')}],
+        {title: T('app.common.createTaskStep3')}
+      ],
       namespace: 'default'
     }
     this.canContinue = true
@@ -143,9 +144,7 @@ class CreateTask extends Component {
   }
 
   changeNamespace = (namespace) => {
-    this.setState({
-      namespace: namespace
-    })
+    this.setState({namespace})
   }
 
   /**
@@ -166,41 +165,25 @@ class CreateTask extends Component {
         </div>
         <div className='create-task-content'>
           {
-            currentStep === 0 ? <Panel key='namespace' title={<div className='col-panel-title'>Settings</div>}>
+            currentStep === 2 ? null : <Panel key='namespace' title={<div className='col-panel-title'>Settings</div>}>
               <div className='create-panel-content'>
                 <Form inline>
                   <FormItem label='Namespace' key='namespace-formitem'>
                     <Select
                       mode='single' list={kubeinfo.namespaces}
                       searchable
-                      value={this.state.value}
+                      value={'0'} // TODO default value is not working for the first render
                       style={{margin: '4px 4px', width: '200px'}}
-                      onChange={(value) => {
-                        if (value) {
-                          this.changeNamespace(value.name)
+                      disabled={currentStep === 1}
+                      onChange={(item) => {
+                        if (item[0]) {
+                          this.changeNamespace(item[0].name)
                         }
                       }} />
                   </FormItem>
                 </Form>
               </div>
-            </Panel> : null
-          }
-          {
-            currentStep === 1 ? <Panel key='namespace' title={<div className='col-panel-title'>Settings</div>}>
-              <div className='create-panel-content'>
-                <Form inline>
-                  <FormItem label='Namespace' key='namespace-formitem'>
-                    <Select
-                      mode='single' list={kubeinfo.namespaces}
-                      searchable
-                      value={this.state.value}
-                      style={{margin: '4px 4px', width: '200px'}}
-                      disabled='disabled'
-                    />
-                  </FormItem>
-                </Form>
-              </div>
-            </Panel> : null
+            </Panel>
           }
           {
             currentStep === 0 ? <div className='create-task-form'>
@@ -419,7 +402,8 @@ class CreateTask extends Component {
                   let dataOptions = {
                     content: socketData.prevState,
                     command: Task.command.ROLLBACK,
-                    serviceUID: lastServiceItem.key
+                    serviceUID: lastServiceItem.key,
+                    namespace: this.state.namespace
                   }
                   this.props.submitCreateTempAjax(dataOptions)
                 }
