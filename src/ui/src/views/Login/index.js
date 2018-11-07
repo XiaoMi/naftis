@@ -54,6 +54,11 @@ class Login extends Component {
                   placeholder={T('app.common.signInPwd')}
                   value={password}
                   onInput={this.handleChange}
+                  onKeyDown={(e) => {
+                    if (e.keyCode === 13) {
+                      this.handleSubmit()
+                    }
+                  }}
                 />
               </div>
               <div className='form-item'>
