@@ -195,7 +195,7 @@ class Istio extends Component {
       case 'input':
         if (tempKey === 'tempFormType') {
           let formTypeList = JSON.parse(JSON.stringify(this.formTypeList))
-          return (<Select key={index} mode='single' list={formTypeList} placeholder='' value={tempValue} style={{ width: '150px' }}
+          return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={tempValue} style={{ width: '150px' }}
             onChange={(value) => {
               if (value) this.changeItem(tempKey, value.id, index, value.name)
             }} />)
