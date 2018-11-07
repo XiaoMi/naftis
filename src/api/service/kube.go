@@ -74,8 +74,9 @@ func InitKube() {
 	if err != nil || string(b) == "" {
 		log.Info("[k8s] get Naftis namespace fail or get empty namespace, use `naftis` by default", "err", err, "namespace", string(b))
 		bootstrap.Args.Namespace = "naftis"
+	} else {
+		bootstrap.Args.Namespace = string(b)
 	}
-	bootstrap.Args.Namespace = string(b)
 
 	// start sync service info
 	go ServiceInfo.sync()
