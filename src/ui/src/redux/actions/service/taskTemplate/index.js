@@ -71,7 +71,7 @@ const getKubeInfoAjax = () => {
           if (response.data.namespaces && response.data.namespaces.length) {
             response.data.namespaces.map((item, index) => {
               ns.push({
-                id: index,
+                id: index.toString(),
                 name: item
               })
             })

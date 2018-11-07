@@ -44,6 +44,7 @@ func AddTaskTmpl(name, content, brief, operator string, vars []model.TaskTmplVar
 	if e := tx.Create(&t).Error; e != nil {
 		log.Error("[service] AddTaskTmpl fail", "error", e.Error())
 		tx.Rollback()
+		return t, ErrSQLExec
 	}
 
 	for i := range vars {
@@ -61,11 +62,10 @@ func AddTaskTmpl(name, content, brief, operator string, vars []model.TaskTmplVar
 	if e := tx.Exec(stmt, valueArgs...).Error; e != nil {
 		log.Error("[service] AddTaskTmplVar fail", "error", e.Error())
 		tx.Rollback()
+		return t, ErrSQLExec
 	}
 
-	tx.Commit()
-
-	return
+	return t, tx.Commit().Error
 }
 
 // DelTaskTmpl deletes specific record of table `task_tmpls`.
