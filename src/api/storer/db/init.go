@@ -40,7 +40,7 @@ func migrate() {
 var (
 	// ErrInvalidParams defines invalid params error.
 	ErrInvalidParams = errors.New("invalid params")
-	// ErrExecSQLFail defines sql execution error.
+	// ErrSQLExec defines sql execution error.
 	ErrSQLExec = errors.New("sql executed fail")
 )
 
