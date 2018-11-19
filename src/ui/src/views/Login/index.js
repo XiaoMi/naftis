@@ -14,9 +14,6 @@
 
 import React, { Component } from 'react'
 import { Input, Button, Checkbox } from '@hi-ui/hiui/es'
-import '@hi-ui/hiui/es/input/style'
-import '@hi-ui/hiui/es/button/style'
-import '@hi-ui/hiui/es/checkbox/style'
 import { connect } from 'react-redux'
 import * as Actions from '../../redux/actions/login'
 import './index.scss'

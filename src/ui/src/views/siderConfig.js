@@ -14,7 +14,6 @@
 
 import React from 'react'
 import Icon from '@hi-ui/hiui/es/icon'
-import '@hi-ui/hiui/es/icon/style'
 import { addLocaleData, IntlProvider } from 'react-intl'
 import { getLocaleLanguage } from './../commons/languages'
 

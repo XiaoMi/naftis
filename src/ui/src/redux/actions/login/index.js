@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import { handleNotificate } from '@hi-ui/hiui/es/notification'
-import '@hi-ui/hiui/es/notification/style/index.js'
 import axios from '../../../commons/axios'
 
 const TYPE = {

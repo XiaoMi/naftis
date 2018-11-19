@@ -15,19 +15,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Stepper, Panel, Input, Select, DatePicker, Icon, handleNotificate, Table, Form, Button, Alert, Counter } from '@hi-ui/hiui/es'
-import '@hi-ui/hiui/es/stepper/style'
-import '@hi-ui/hiui/es/panel/style'
-import '@hi-ui/hiui/es/form/style'
-import '@hi-ui/hiui/es/table/style'
-import '@hi-ui/hiui/es/input/style'
-import '@hi-ui/hiui/es/alert/style'
-import '@hi-ui/hiui/es/counter/style'
-import '@hi-ui/hiui/es/select'
-import '@hi-ui/hiui/es/select/style'
-import '@hi-ui/hiui/es/popper/style'
-import '@hi-ui/hiui/es/date-picker/style'
-import '@hi-ui/hiui/es/button/style'
-import '@hi-ui/hiui/es/notification/style/index.js'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/createTask'
 import * as TaskTemplateActions from '../../../redux/actions/service/taskTemplate'
@@ -241,8 +228,8 @@ class CreateTask extends Component {
                                       value={item[v.key]}
                                       style={{margin: '4px 4px', width: '200px'}}
                                       onChange={(value) => {
-                                        if (value) {
-                                          this.updateParam(value.id, v.key, index)
+                                        if (value[0]) {
+                                          this.updateParam(value[0].id, v.key, index)
                                         }
                                       }} />
                                   }
