@@ -23,7 +23,6 @@ import NavMenu from '../components/NavMenu'
 import BaseList from '../components/BaseList'
 import logoImg from '../assets/logo-w-128.png'
 import headImage from '../assets/mi-black.png'
-import '@hi-ui/hiui/es/icon/style'
 import './rewrite.scss'
 
 class Index extends React.Component {

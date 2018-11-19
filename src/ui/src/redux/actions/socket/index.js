@@ -14,7 +14,6 @@
 
 import Sockette from 'sockette'
 import { handleNotificate } from '@hi-ui/hiui/es/notification'
-import '@hi-ui/hiui/es/notification/style/index.js'
 import {store} from '../../../index'
 import {getHost} from '../../../commons/axios.js'
 

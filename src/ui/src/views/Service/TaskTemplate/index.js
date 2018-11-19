@@ -18,15 +18,6 @@ import AceEditor from 'react-ace'
 import 'brace/mode/yaml'
 import 'brace/theme/monokai'
 import { Table, Modal, Input, Select, Form, Button, handleNotificate, Icon, Tooltip } from '@hi-ui/hiui/es'
-import '@hi-ui/hiui/es/panel/style'
-import '@hi-ui/hiui/es/table/style'
-import '@hi-ui/hiui/es/modal/style'
-import '@hi-ui/hiui/es/form/style'
-import '@hi-ui/hiui/es/input/style'
-import '@hi-ui/hiui/es/icon/style'
-import '@hi-ui/hiui/es/select'
-import '@hi-ui/hiui/es/button/style'
-import '@hi-ui/hiui/es/notification/style/index.js'
 import { Task } from '../../../commons/consts'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/taskTemplate'
@@ -195,9 +186,14 @@ class Istio extends Component {
       case 'input':
         if (tempKey === 'tempFormType') {
           let formTypeList = JSON.parse(JSON.stringify(this.formTypeList))
-          return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={tempValue} style={{ width: '150px' }}
+          console.log(formTypeList, 111)
+          console.log('4434232323', tempValue, formTypeList)
+          return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={[tempValue]} style={{ width: '150px' }}
             onChange={(value) => {
-              if (value) this.changeItem(tempKey, value.id, index, value.name)
+              if (value[0]) {
+                console.log(value[0])
+                this.changeItem(tempKey, value[0].id, index, value[0].name)
+              }
             }} />)
         } else {
           if (tempKey === 'tempName') {

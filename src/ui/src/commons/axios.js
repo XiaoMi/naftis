@@ -17,7 +17,6 @@ import CONFIG from '../config'
 import $$ from './tools'
 import { getLangFromCookie, setDefaultLanguageCookie } from './languages'
 import { handleNotificate } from '@hi-ui/hiui/es/notification'
-import '@hi-ui/hiui/es/notification/style/index.js'
 
 const TIMEOUT = 20000
 

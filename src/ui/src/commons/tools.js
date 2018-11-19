@@ -14,7 +14,6 @@
 
 import 'whatwg-fetch'
 import { handleNotificate } from '@hi-ui/hiui/es/notification'
-import '@hi-ui/hiui/es/notification/style/index.js'
 import base64 from './../utils/base64'
 import md5 from './../utils/md5'
 

@@ -20,9 +20,6 @@ import ReactEcharts from 'echarts-for-react'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as serviceStatusAction from '../../../redux/actions/worktop/serviceStatus'
 import * as socketAction from '../../../redux/actions/socket'
-import '@hi-ui/hiui/es/panel/style'
-import '@hi-ui/hiui/es/grid/style'
-import '@hi-ui/hiui/es/nav-menu/style/index.css'
 import './index.scss'
 
 const TIMEOUT1 = 10000 // dashboard fetch timeout setting
