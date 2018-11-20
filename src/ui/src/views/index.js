@@ -42,9 +42,15 @@ class Index extends React.Component {
 
   logout = (item) => {
     if (item.id === 3) {
-      window.sockette && window.sockette.close()
-      window.timerReconnect && clearInterval(window.timerReconnect)
-      window.timerPing && clearInterval(window.timerPing)
+      try {
+        window.sockette && window.sockette.close()
+        window.timerReconnect && clearInterval(window.timerReconnect)
+        window.timerPing && clearInterval(window.timerPing)
+      } catch (e) {
+        window.timerReconnect && clearInterval(window.timerReconnect)
+        window.timerPing && clearInterval(window.timerPing)
+      }
+
       window.localStorage.clear()
       window.location.href = '/'
     }
