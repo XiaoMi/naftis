@@ -21,7 +21,6 @@ import routes from './router'
 import { setLanguageCookie, getIstioLangFromCookie } from '../commons/languages/index'
 import NavMenu from '../components/NavMenu'
 import BaseList from '../components/BaseList'
-import logoImg from '../assets/logo-w-128.png'
 import headImage from '../assets/mi-black.png'
 import './rewrite.scss'
 
@@ -71,8 +70,7 @@ class Index extends React.Component {
     // left top logo
     const top = (
       <Logo
-        imgUrl={logoImg}
-        text='Naftis'
+        imgUrl={'../../../public/naftis-font.png'}
       />
     )
 
