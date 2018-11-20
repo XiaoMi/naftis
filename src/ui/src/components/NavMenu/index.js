@@ -14,8 +14,6 @@
 
 import React from 'react'
 import { Icon, Tooltip } from '@hi-ui/hiui/es'
-import '@hi-ui/hiui/es/icon/style'
-import '@hi-ui/hiui/es/tooltip/style'
 import './index.scss'
 
 class NavMenu extends React.Component {

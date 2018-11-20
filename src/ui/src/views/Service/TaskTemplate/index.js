@@ -18,15 +18,6 @@ import AceEditor from 'react-ace'
 import 'brace/mode/yaml'
 import 'brace/theme/monokai'
 import { Table, Modal, Input, Select, Form, Button, handleNotificate, Icon, Tooltip } from '@hi-ui/hiui/es'
-import '@hi-ui/hiui/es/panel/style'
-import '@hi-ui/hiui/es/table/style'
-import '@hi-ui/hiui/es/modal/style'
-import '@hi-ui/hiui/es/form/style'
-import '@hi-ui/hiui/es/input/style'
-import '@hi-ui/hiui/es/icon/style'
-import '@hi-ui/hiui/es/select'
-import '@hi-ui/hiui/es/button/style'
-import '@hi-ui/hiui/es/notification/style/index.js'
 import { Task } from '../../../commons/consts'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/taskTemplate'
@@ -130,6 +121,9 @@ class Istio extends Component {
                   return
                 }
                 moduleList[index].type = 'label'
+
+                // In order to solve can't change value in Select component of HIUI，so I add tempFormTypeId to save the value For the time being,
+                if (moduleList[index].tempFormTypeId) moduleList[index].tempFormType = moduleList[index].tempFormTypeId
                 moduleList[index] = this.setValueForModule(moduleList[index], true)
                 this.props.setModuleListData(moduleList)
               }}>Save</Button>&nbsp;&nbsp;
@@ -158,6 +152,51 @@ class Istio extends Component {
   cancelEvent = () => {
     this.setState({
       showModal: false
+    })
+  }
+
+  confirmEvent = () => {
+    const { submitParam, moduleList } = this.props
+    if (this.state.currentType === 'WATCH') {
+      this.setState({
+        showModal: false
+      })
+      return false
+    }
+    for (let i = 0; i < moduleList.length; i++) {
+      if (moduleList[i].type === 'input') {
+        handleNotificate({
+          autoClose: false,
+          title: 'Notification',
+          message: 'please save you edit item first!',
+          type: '',
+          onClose: () => { }
+        })
+        return false
+      }
+    }
+    let vars = []
+    moduleList.length > 0 && moduleList.map((item, index) => {
+      vars.push({
+        comment: item.comment,
+        dataSource: item.dataSource,
+        formType: item.formType,
+        key: index,
+        name: item.name,
+        title: item.title
+      })
+    })
+    submitParam.vars = vars
+    this.props.commitServiceTemplateDataAjax(submitParam, () => {
+      this.props.getServiceTemplateDataAjax()
+      this.setState({ showModal: false })
+      handleNotificate({
+        autoClose: true,
+        title: 'Noticfication',
+        message: 'Add task success',
+        type: '',
+        onClose: () => { }
+      })
     })
   }
 
@@ -195,9 +234,14 @@ class Istio extends Component {
       case 'input':
         if (tempKey === 'tempFormType') {
           let formTypeList = JSON.parse(JSON.stringify(this.formTypeList))
+          console.log(formTypeList, 111)
+          console.log('4434232323', tempValue, formTypeList)
           return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={tempValue} style={{ width: '150px' }}
             onChange={(value) => {
-              if (value) this.changeItem(tempKey, value.id, index, value.name)
+              if (value[0]) {
+                console.log(value[0])
+                this.changeItem(tempKey, value[0].id, index, value[0].name)
+              }
             }} />)
         } else {
           if (tempKey === 'tempName') {
@@ -216,10 +260,13 @@ class Istio extends Component {
 
   changeItem = (tempKey, value, index, desc) => {
     let moduleList = [...this.props.moduleList]
-    moduleList[index][tempKey] = value
     if (tempKey === 'tempFormType') {
       moduleList[index].tempFormTypeDesc = desc
+      moduleList[index].tempFormTypeId = value
+    } else {
+      moduleList[index][tempKey] = value
     }
+
     this.props.setModuleListData(moduleList)
   }
 
@@ -295,71 +342,11 @@ class Istio extends Component {
         title={(this.state.currentType === 'WATCH') ? T('app.common.viewTpl') : T('app.common.newTpl')}
         show={this.state.showModal}
         backDrop
-        onConfirm={() => {
-          if (this.state.currentType === 'WATCH') {
-            this.setState({
-              showModal: false
-            })
-            return false
-          }
-          let vars = []
-          moduleList.length > 0 && moduleList.map((item, index) => {
-            vars.push({
-              comment: item.comment,
-              dataSource: item.dataSource,
-              formType: item.formType,
-              key: index,
-              name: item.name,
-              title: item.title
-            })
-          })
-          submitParam.vars = vars
-          this.props.commitServiceTemplateDataAjax(submitParam, () => {
-            this.props.getServiceTemplateDataAjax()
-            this.setState({ showModal: false })
-            handleNotificate({
-              autoClose: true,
-              title: 'Noticfication',
-              message: 'Add task success',
-              type: '',
-              onClose: () => { }
-            })
-          })
-        }}
+        onConfirm={this.confirmEvent}
         onCancel={this.cancelEvent}
         footers={[
           <Button key='1' type='primary' appearance='line' onClick={this.cancelEvent}>{T('app.common.cancel')}</Button>,
-          <Button key='2' type='primary' onClick={() => {
-            if (this.state.currentType === 'WATCH') {
-              this.setState({
-                showModal: false
-              })
-              return false
-            }
-            let vars = []
-            moduleList.length > 0 && moduleList.map((item, index) => {
-              vars.push({
-                comment: item.comment,
-                dataSource: item.dataSource,
-                formType: item.formType,
-                key: index,
-                name: item.name,
-                title: item.title
-              })
-            })
-            submitParam.vars = vars
-            this.props.commitServiceTemplateDataAjax(submitParam, () => {
-              this.props.getServiceTemplateDataAjax()
-              this.setState({ showModal: false })
-              handleNotificate({
-                autoClose: true,
-                title: 'Noticfication',
-                message: 'Add task success',
-                type: '',
-                onClose: () => { }
-              })
-            })
-          }}>{T('app.common.confirm')}</Button>
+          <Button key='2' type='primary' onClick={this.confirmEvent}>{T('app.common.confirm')}</Button>
         ]}
       >
         <div className='task-modal-content'>
@@ -405,45 +392,7 @@ class Istio extends Component {
               <div className='add-new-button'>
                 {
                   this.state.currentType !== 'WATCH'
-                    ? <Button type='primary' onClick={() => {
-                      let moduleList = []
-                      let names = new Set()
-                      let content = this.props.submitParam.content
-                      if (content) {
-                        let arr = content.split('{{.')
-                        arr.forEach(item => {
-                          if (item.indexOf('}}') !== -1) {
-                            let name = item.substring(0, item.indexOf('}}'))
-                            names.add(name)
-                          }
-                        })
-                      }
-                      names = Array.from(names)
-                      this.setState({ currentType: 'ADD' })
-                      names.forEach(item => {
-                        let moduleItem = {
-                          type: 'label',
-                          name: item,
-                          tempName: item,
-                          title: item,
-                          tempTitle: item,
-                          comment: item,
-                          tempComment: item,
-                          formType: 1,
-                          formTypeDesc: 'STRING',
-                          tempFormType: 1,
-                          tempFormTypeDesc: 'STRING',
-                          dataSource: '',
-                          tempDataSource: '',
-                          opetation: '',
-                          tempOpetation: ''
-                        }
-                        moduleList.push(moduleItem)
-                      })
-
-                      this.props.setModuleListData(moduleList)
-                    }
-                    }>Generate rows</Button> : null
+                    ? <Button type='primary' onClick={this.generateRowsCLick}>Generate rows</Button> : null
                 }
               </div>
               <div className='table-add-wrap'>
@@ -458,6 +407,44 @@ class Istio extends Component {
         </div>
       </Modal>
     )
+  }
+
+  generateRowsCLick = () => {
+    let moduleList = []
+    let names = new Set()
+    let content = this.props.submitParam.content
+    if (content) {
+      let arr = content.split('{{.')
+      arr.forEach(item => {
+        if (item.indexOf('}}') !== -1) {
+          let name = item.substring(0, item.indexOf('}}'))
+          names.add(name)
+        }
+      })
+    }
+    names = Array.from(names)
+    this.setState({ currentType: 'ADD' })
+    names.forEach(item => {
+      let moduleItem = {
+        type: 'label',
+        name: item,
+        tempName: item,
+        title: item,
+        tempTitle: item,
+        comment: item,
+        tempComment: item,
+        formType: 1,
+        formTypeDesc: 'STRING',
+        tempFormType: 1,
+        tempFormTypeDesc: 'STRING',
+        dataSource: '',
+        tempDataSource: '',
+        opetation: '',
+        tempOpetation: ''
+      }
+      moduleList.push(moduleItem)
+    })
+    this.props.setModuleListData(moduleList)
   }
 
   renderTop = () => {
