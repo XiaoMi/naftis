@@ -19,7 +19,7 @@ import (
 	"github.com/xiaomi/naftis/src/api/service"
 )
 
-// d3Graph returns d3 graph data filtered by provided root service name.
+// D3Graph returns d3 graph data filtered by provided root service name.
 func D3Graph(c *gin.Context) {
 	service.Prom.ServeHTTP(c.Writer, c.Request)
 	return
