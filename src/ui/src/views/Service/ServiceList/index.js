@@ -121,7 +121,7 @@ class ServiceList extends Component {
                     // click pods item
                     this.props.getServicePodsDataAjax(item.title)
                     if (item.graphNodeName) {
-                      this.props.getGraphDataAjax(item.graphNodeName)
+                      this.props.getGraphDataAjax(item.namespace, item.graphNodeName)
                     }
                   } else {
                     // click service item

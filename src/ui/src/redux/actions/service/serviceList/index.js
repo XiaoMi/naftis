@@ -208,10 +208,10 @@ const getServiceKeyPodsDataAjax = (key) => {
   }
 }
 
-const getGraphDataAjax = (title, fn) => {
+const getGraphDataAjax = (namespace, service, fn) => {
   return dispatch => {
     axios.getAjax({
-      url: `api/d3graph/${title}`,
+      url: `api/d3graph?source_namespace=${namespace}&source_workload=${service}`,
       type: 'GET',
       data: ''
     }).then(response => {
