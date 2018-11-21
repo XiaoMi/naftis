@@ -15,10 +15,9 @@
 package router
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/xiaomi/naftis/src/api/handler"
 	"github.com/xiaomi/naftis/src/api/middleware"
-
-	"github.com/gin-gonic/gin"
 )
 
 // Init initializes router pkg
@@ -39,7 +38,7 @@ func Init(e *gin.Engine) {
 	api.GET("/login_user", handler.LoginUser)
 	api.GET("/diagnose", handler.ListStatus)
 	api.GET("/metrics", handler.ListMetrics)
-	api.GET("/d3graph/:svcname", handler.D3Graph)
+	api.GET("/d3graph", handler.D3Graph)
 
 	api.GET("/services", handler.Services)
 	api.GET("/services/:uid", handler.Services)

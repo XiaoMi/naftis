@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
@@ -120,6 +121,22 @@ func parseConfig() {
 	if err != nil {
 		panic(fmt.Errorf("parse config file fail: %s", err))
 	}
+
+	// init Naftis namespace
+	b, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace") // just pass the file name
+	if err != nil || string(b) == "" {
+		log.Info("[k8s] get Naftis namespace fail or get empty namespace, use `naftis` by default", "err", err, "namespace", string(b))
+		bootstrap.Args.Namespace = "naftis"
+	} else {
+		bootstrap.Args.Namespace = string(b)
+	}
+	log.Info("[Args]", "Host", bootstrap.Args.Host)
+	log.Info("[Args]", "Port", bootstrap.Args.Port)
+	log.Info("[Args]", "InCluster", bootstrap.Args.InCluster)
+	log.Info("[Args]", "ConfigFile", bootstrap.Args.ConfigFile)
+	log.Info("[Args]", "Namespace", bootstrap.Args.Namespace)
+	log.Info("[Args]", "IstioNamespace", bootstrap.Args.IstioNamespace)
+	println()
 }
 
 func main() {

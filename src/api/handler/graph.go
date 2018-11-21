@@ -15,16 +15,12 @@
 package handler
 
 import (
-	"github.com/xiaomi/naftis/src/api/service"
-
 	"github.com/gin-gonic/gin"
+	"github.com/xiaomi/naftis/src/api/service"
 )
 
-// D3Graph returns d3 graph data filtered by provided root service name.
+// d3Graph returns d3 graph data filtered by provided root service name.
 func D3Graph(c *gin.Context) {
-	graph := service.Prom.Generate(
-		c.Query("time_horizon"),
-		c.Query("filter_empty"),
-	).Filter(c.Param("svcname"))
-	c.JSON(200, service.GenerateD3JSON(graph))
+	service.Prom.ServeHTTP(c.Writer, c.Request)
+	return
 }

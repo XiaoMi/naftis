@@ -136,7 +136,11 @@ https://github.com/XiaoMi/hiui
 ## 快速开始
 
 ```bash
+# 在本地 Kubernetes 集群或 Minikuber 上
 kubectl create namespace naftis && kubectl apply -n naftis -f mysql.yaml && kubectl apply -n naftis -f naftis.yaml
+
+# 在各云服务商提供的 Kubernetes 集群上，比如 GKE、阿里云、AWS
+kubectl create namespace naftis && kubectl apply -n naftis -f mysql-cloud.yaml && kubectl apply -n naftis -f naftis-cloud.yaml
 
 # 通过端口转发的方式访问 Naftis
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
@@ -157,8 +161,10 @@ $ kubectl get namespace naftis
 NAME           STATUS    AGE
 naftis         Active    18m
 
-# 部署 Naftis MySQL服务
+# 部署 Naftis MySQL 服务（本地 Kuberenetes 集群）
 $ kubectl apply -n naftis -f mysql.yaml
+# 部署 Naftis MySQL 服务（云服务商提供的 Kuberenetes 集群）
+$ kubectl apply -n naftis -f mysql-cloud.yaml
 
 # 确认 MySQL 已部署
 NAME                           READY     STATUS    RESTARTS   AGE

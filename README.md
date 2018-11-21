@@ -135,7 +135,11 @@ https://github.com/XiaoMi/hiui
 ## Quick Started
 
 ```bash
+# deploy Naftis under bare metal Kubernetes
 kubectl create namespace naftis && kubectl apply -n naftis -f mysql.yaml && kubectl apply -n naftis -f naftis.yaml
+
+# deploy Naftis under cloud Kubernetes cluster, such as GKE, Amazon EKS, Alibaba Cloud Kubernetes
+kubectl create namespace naftis && kubectl apply -n naftis -f mysql-cloud.yaml && kubectl apply -n naftis -f naftis.yaml
 
 # port forward Naftis
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
@@ -156,8 +160,10 @@ $ kubectl get namespace naftis
 NAME           STATUS    AGE
 naftis         Active    18m
 
-# deploy Naftis MySQL service
+# deploy Naftis MySQL service under bare metal Kubernetes
 $ kubectl apply -n naftis -f mysql.yaml
+# deploy Naftis MySQL service under cloud Kubernetes cluster, such as GKE, Amazon EKS, Alibaba Cloud Kubernetes
+$ kubectl apply -n naftis -f mysql-cloud.yaml
 
 # ensure MySQL service is deployed
 $ kubectl get svc -n naftis
