@@ -16,7 +16,6 @@ package service
 
 import (
 	"fmt"
-	"io/ioutil"
 	"strings"
 	"sync"
 	"time"
@@ -68,15 +67,6 @@ func InitKube() {
 
 	ServiceInfo = newKubeInfo("", time.Second*5)
 	IstioInfo = newKubeInfo(bootstrap.Args.IstioNamespace, time.Second*5)
-
-	// init Naftis namespace
-	b, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace") // just pass the file name
-	if err != nil || string(b) == "" {
-		log.Info("[k8s] get Naftis namespace fail or get empty namespace, use `naftis` by default", "err", err, "namespace", string(b))
-		bootstrap.Args.Namespace = "naftis"
-	} else {
-		bootstrap.Args.Namespace = string(b)
-	}
 
 	// start sync service info
 	go ServiceInfo.sync()
@@ -293,6 +283,7 @@ type Tree struct {
 	Title         string `json:"title"`
 	Key           string `json:"key"`
 	GraphNodeName string `json:"graphNodeName"`
+	Namespace     string `json:"namespace"`
 	Children      []Tree `json:"children"`
 }
 
@@ -306,7 +297,8 @@ func (k *kubeInfo) Tree() []Tree {
 			children = append(children, Tree{
 				Title:         pod.Name,
 				Key:           string(pod.UID),
-				GraphNodeName: fmt.Sprintf("%s (%s-%s)", i.Name, i.Name, pod.Labels["version"]),
+				Namespace:     i.Namespace,
+				GraphNodeName: fmt.Sprintf("%s-%s", i.Name, pod.Labels["version"]),
 			})
 		}
 		t = append(t, Tree{
