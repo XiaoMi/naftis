@@ -1,10 +1,4 @@
 ---
-# Source: naftis/templates/namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: naftis
----
 # Source: naftis/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -169,7 +163,6 @@ spec:
             requests:
               cpu: 20m
               memory: 32Mi
-            
       volumes:
         - name: naftis-config
           configMap:
