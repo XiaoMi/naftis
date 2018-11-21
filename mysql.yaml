@@ -149,22 +149,6 @@ data:
     ) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4;
     
 ---
-# Source: mysql/templates/tests/test-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: naftis-mysql-test
-  labels:
-    app: naftis-mysql
-    chart: "mysql-0.8.2"
-    heritage: "Tiller"
-    release: "naftis"
-data:
-  run.sh: |-
-    @test "Testing MySQL Connection" {
-      mysql --host=naftis-mysql --port=3306 -u root -pWlRncGh3UWY5VQ==
-    }
----
 # Source: mysql/templates/svc.yaml
 apiVersion: v1
 kind: Service
