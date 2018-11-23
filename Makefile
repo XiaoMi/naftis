@@ -20,7 +20,7 @@ SHORT_REV := $(shell git rev-parse HEAD | cut -c1-8)
 BUILD_TIME := $(shell date +%Y-%m-%d--%T)
 APP_PKG := $(shell $(BASE_PATH)/tool/apppkg.sh)
 UI := $(BASE_PATH)/src/ui
-TAG := $(shell git describe --tags --abbrev=0) # TODO
+TAG := $(shell $(BASE_PATH)/tool/tag.sh) # TODO
 export BIN_OUT := $(BASE_PATH)/bin
 
 all: print fmt lint vet test build docker push
