@@ -295,22 +295,23 @@ type Tree struct {
 }
 
 func (k *kubeInfo) Tree() []Tree {
-	services := k.Services("").Exclude("kube-system")
+	services := k.Services("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)
 	t := make([]Tree, 0, len(services))
-	for _, i := range services {
-		children := make([]Tree, 0, len(i.Pods))
-		for _, pod := range i.Pods {
+	for _, s := range services {
+		children := make([]Tree, 0, len(s.Pods))
+		for _, pod := range s.Pods {
 			children = append(children, Tree{
 				Title:         pod.Name,
 				Key:           string(pod.UID),
-				Namespace:     i.Namespace,
-				GraphNodeName: fmt.Sprintf("%s-%s", i.Name, pod.Labels["version"]),
+				Namespace:     pod.Namespace,
+				GraphNodeName: fmt.Sprintf("%s-%s", s.Name, pod.Labels["version"]),
 			})
 		}
 		t = append(t, Tree{
-			Title:    i.Name,
-			Key:      string(i.UID),
-			Children: children,
+			Title:     s.Name,
+			Key:       string(s.UID),
+			Namespace: s.Namespace,
+			Children:  children,
 		})
 	}
 	return t
