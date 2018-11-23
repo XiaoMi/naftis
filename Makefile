@@ -110,11 +110,13 @@ push: push.api push.ui
 push.api:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.api<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker push $(HUB)/naftis-api:latest
+	@docker push $(HUB)/naftis-api:$(TAG)
 	@echo -e "\n"
 
 push.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker push $(HUB)/naftis-ui:latest
+	@docker push $(HUB)/naftis-ui:$(TAG)
 	@echo -e "\n"
 
 tar:
