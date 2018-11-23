@@ -101,7 +101,7 @@ spec:
     spec:
       containers:
         - name: naftis
-          image: docker.io/sevennt/naftis-ui:0.1.0
+          image: docker.io/sevennt/naftis-ui:0.1.1
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -130,7 +130,7 @@ spec:
     spec:
       containers:
         - name: naftis-api
-          image: docker.io/sevennt/naftis-api:0.1.0
+          image: docker.io/sevennt/naftis-api:0.1.1
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/naftis/config/config.toml
