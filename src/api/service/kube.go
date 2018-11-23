@@ -37,9 +37,15 @@ var (
 	IstioInfo *kubeInfo
 )
 
+type service struct {
+	v1.Service
+	Pods pods
+}
+
 type kubeInfo struct {
 	mtx          *sync.RWMutex
-	services     []v1.Service
+	wg           *sync.WaitGroup
+	services     []service
 	namespaces   []v1.Namespace
 	syncInterval time.Duration
 	namespace    string
@@ -76,13 +82,14 @@ func InitKube() {
 func newKubeInfo(namespace string, syncInterval time.Duration) *kubeInfo {
 	return &kubeInfo{
 		mtx:          new(sync.RWMutex),
-		services:     make([]v1.Service, 0),
+		wg:           new(sync.WaitGroup),
+		services:     make([]service, 0),
 		namespace:    namespace,
 		syncInterval: syncInterval,
 	}
 }
 
-type services []v1.Service
+type services []service
 type namespaces []v1.Namespace
 
 func (p services) Exclude(namespaces ...string) services {
@@ -91,7 +98,7 @@ func (p services) Exclude(namespaces ...string) services {
 		namespacesM[n] = true
 	}
 
-	retServices := make([]v1.Service, 0)
+	retServices := make([]service, 0)
 	for _, pod := range p {
 		if _, ok := namespacesM[pod.Namespace]; !ok {
 			retServices = append(retServices, pod)
@@ -108,7 +115,7 @@ func (k *kubeInfo) Services(uid string) services {
 		return k.services
 	}
 
-	ret := make([]v1.Service, 0)
+	ret := make([]service, 0)
 	for _, s := range k.services {
 		if string(s.UID) == uid {
 			ret = append(ret, s)
@@ -288,12 +295,11 @@ type Tree struct {
 }
 
 func (k *kubeInfo) Tree() []Tree {
-	services := k.Services("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)
+	services := k.Services("").Exclude("kube-system")
 	t := make([]Tree, 0, len(services))
 	for _, i := range services {
-		pods := k.Pods(i.Spec.Selector)
-		children := make([]Tree, 0, len(pods))
-		for _, pod := range pods {
+		children := make([]Tree, 0, len(i.Pods))
+		for _, pod := range i.Pods {
 			children = append(children, Tree{
 				Title:         pod.Name,
 				Key:           string(pod.UID),
@@ -328,7 +334,18 @@ func (k *kubeInfo) sync() {
 			log.Error("[k8s] get namespaces err", "err", err)
 		}
 		k.mtx.Lock()
-		k.services = svcs.Items
+		k.services = make([]service, 0, len(svcs.Items))
+		k.wg.Add(len(svcs.Items))
+		for _, i := range svcs.Items {
+			go func(i v1.Service) {
+				s := service{}
+				s.Service = i
+				s.Pods = k.Pods(i.Spec.Selector)
+				k.services = append(k.services, s)
+				k.wg.Done()
+			}(i)
+		}
+		k.wg.Wait()
 		k.namespaces = ns.Items
 		k.mtx.Unlock()
 
