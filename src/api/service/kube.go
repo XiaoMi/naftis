@@ -181,6 +181,8 @@ type KubePodStatus struct {
 
 // Status returns pods' brief information.
 func (p pods) Status() []KubePodStatus {
+	log.Info("[API] /api/diagnose Pods Status start", "ts", time.Now())
+
 	pods := make([]KubePodStatus, 0, len(p))
 	for _, item := range p {
 		readyCnt, restartCnt, containerCnt := 0, 0, 0
@@ -201,11 +203,15 @@ func (p pods) Status() []KubePodStatus {
 		})
 	}
 
+	log.Info("[API] /api/diagnose Pods Status end", "ts", time.Now())
+
 	return pods
 }
 
 // Status returns services' brief information.
 func (p services) Status() []KubeServiceStatus {
+	log.Info("[API] /api/diagnose Services Status start", "ts", time.Now())
+
 	components := make([]KubeServiceStatus, 0, len(p))
 	for _, item := range p {
 		ports := ""
@@ -225,6 +231,7 @@ func (p services) Status() []KubeServiceStatus {
 			Age:        time.Since(item.CreationTimestamp.Time).Truncate(time.Second).String(),
 		})
 	}
+	log.Info("[API] /api/diagnose Services Status end", "ts", time.Now())
 
 	return components
 }
@@ -320,6 +327,7 @@ func (k *kubeInfo) Tree() []Tree {
 // sync syncs services data from Kubernetes periodically.
 func (k *kubeInfo) sync() {
 	for {
+		log.Info("[Kube] sync start", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
 		svcs, err := client.CoreV1().Services(k.namespace).List(metav1.ListOptions{
 			LabelSelector: "provider!=kubernetes",
 		})
@@ -350,6 +358,7 @@ func (k *kubeInfo) sync() {
 		k.namespaces = ns.Items
 		k.mtx.Unlock()
 
+		log.Info("[Kube] sync end", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
 		time.Sleep(k.syncInterval)
 	}
 }
