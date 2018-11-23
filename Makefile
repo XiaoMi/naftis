@@ -20,6 +20,7 @@ SHORT_REV := $(shell git rev-parse HEAD | cut -c1-8)
 BUILD_TIME := $(shell date +%Y-%m-%d--%T)
 APP_PKG := $(shell $(BASE_PATH)/tool/apppkg.sh)
 UI := $(BASE_PATH)/src/ui
+TAG := $(shell git describe --tags --abbrev=0) # TODO
 export BIN_OUT := $(BASE_PATH)/bin
 
 all: print fmt lint vet test build docker push
@@ -35,6 +36,7 @@ print:
 	@echo USER:$(USER)
 	@echo HUB:$(HUB)
 	@echo UI:$(UI)
+	@echo TAG:$(TAG)
 	@echo -e "\n"
 
 fmt:
@@ -90,17 +92,17 @@ docker: docker.api docker.ui
 
 docker.api:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.api<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker build -t $(HUB)/naftis-api:latest -f ./Dockerfile.api .
+	@docker build -t $(HUB)/naftis-api:$(TAG) -f ./Dockerfile.api .
 	@echo -e "\n"
 
 docker.apidebug:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.apidebug<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker build -t $(HUB)/naftis-api:latest -f ./Dockerfile.api_debug .
+	@docker build -t $(HUB)/naftis-api:$(TAG) -f ./Dockerfile.api_debug .
 	@echo -e "\n"
 
 docker.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker build -t $(HUB)/naftis-ui:latest -f ./Dockerfile.ui .
+	@docker build -t $(HUB)/naftis-ui:$(TAG) -f ./Dockerfile.ui .
 	@echo -e "\n"
 
 push: push.api push.ui

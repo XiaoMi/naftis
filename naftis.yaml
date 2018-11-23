@@ -50,7 +50,7 @@ metadata:
   namespace: naftis
   labels:
     heritage: Tiller
-    chart: "naftis-0.1.0"
+    chart: "naftis-0.1.1"
     app: naftis-api
     release: naftis
 spec:
@@ -68,7 +68,7 @@ metadata:
   namespace: naftis
   labels:
     heritage: Tiller
-    chart: "naftis-0.1.0"
+    chart: "naftis-0.1.1"
     app: naftis-ui
     release: naftis
 spec:
@@ -88,7 +88,7 @@ metadata:
   namespace: naftis
   labels:
     heritage: Tiller
-    chart: "naftis-0.1.0"
+    chart: "naftis-0.1.1"
     app: naftis-ui
     release: naftis
 spec:
@@ -101,8 +101,8 @@ spec:
     spec:
       containers:
         - name: naftis
-          image: "docker.io/sevennt/naftis-ui:latest"
-          imagePullPolicy: Always
+          image: docker.io/sevennt/naftis-ui:0.1.0
+          imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
               exec:
@@ -116,7 +116,7 @@ metadata:
   namespace: naftis
   labels:
     heritage: Tiller
-    chart: "naftis-0.1.0"
+    chart: "naftis-0.1.1"
     app: naftis-api
     release: naftis
 spec:
@@ -130,8 +130,8 @@ spec:
     spec:
       containers:
         - name: naftis-api
-          image: docker.io/sevennt/naftis-api:latest
-          imagePullPolicy: Always
+          image: docker.io/sevennt/naftis-api:0.1.0
+          imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/naftis/config/config.toml
             - --istioNamespace=istio-system
