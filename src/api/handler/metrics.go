@@ -15,10 +15,9 @@
 package handler
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/xiaomi/naftis/src/api/bootstrap"
 	"github.com/xiaomi/naftis/src/api/service"
-
-	"github.com/gin-gonic/gin"
 )
 
 // ListMetrics returns some overview metrics of service mesh.

@@ -53,7 +53,7 @@ func ServicePods(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"code": 0,
-		"data": service.ServiceInfo.Pods(svcs[0].Spec.Selector).Status(),
+		"data": svcs[0].Pods.Status(),
 	})
 }
 
