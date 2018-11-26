@@ -251,7 +251,7 @@ func (p *promHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func writeError(w http.ResponseWriter, err error) {
 	w.WriteHeader(http.StatusInternalServerError)
 	_, writeErr := w.Write([]byte(err.Error()))
-	log.Error("[Graph] writeError", "err", writeErr)
+	log.Error("[Graph] writeError", "err", writeErr, "orgerr", err)
 }
 
 func (p *promHandler) generate(opts genOpts) (*Dynamic, error) {

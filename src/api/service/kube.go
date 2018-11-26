@@ -250,7 +250,7 @@ func (k *kubeInfo) Pods(labels map[string]string) pods {
 		LabelSelector: ls,
 	})
 	if err != nil {
-		log.Error("[k8s] get pods fail", err, "err")
+		log.Error("[k8s] get pods fail", "err", err)
 		return pods
 	}
 
@@ -268,7 +268,7 @@ func (k *kubeInfo) PodsByName(name string) pods {
 	p, err := client.CoreV1().Pods(k.namespace).List(l)
 
 	if err != nil {
-		log.Error("[k8s] get retPods fail", err, "err")
+		log.Error("[k8s] get retPods fail", "err", err)
 		return retPods
 	}
 
