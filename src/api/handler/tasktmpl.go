@@ -31,6 +31,7 @@ type taskTmplPayload struct {
 	Brief   string              `json:"brief"`
 	Vars    []model.TaskTmplVar `json:"vars"`
 	Icon    string              `json:"icon"`
+	Default string              `string:"default"`
 }
 
 // ListTaskTmpls returns specified task template.

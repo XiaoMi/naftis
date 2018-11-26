@@ -17,12 +17,11 @@ package handler
 import (
 	"errors"
 
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 	"github.com/xiaomi/naftis/src/api/model"
 	"github.com/xiaomi/naftis/src/api/service"
 	"github.com/xiaomi/naftis/src/api/util"
-
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
 )
 
 type taskPayload struct {

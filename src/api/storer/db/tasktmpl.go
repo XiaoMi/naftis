@@ -54,11 +54,11 @@ func AddTaskTmpl(name, content, brief, operator string, vars []model.TaskTmplVar
 	valueStrings := make([]string, 0, len(vars))
 	valueArgs := make([]interface{}, 0, len(vars)*3)
 	for _, v := range vars {
-		valueStrings = append(valueStrings, "(?,?,?,?,?,?)")
-		valueArgs = append(valueArgs, t.ID, v.Name, v.Title, v.Comment, v.FormType, v.DataSource)
+		valueStrings = append(valueStrings, "(?,?,?,?,?,?,?)")
+		valueArgs = append(valueArgs, t.ID, v.Name, v.Title, v.Comment, v.FormType, v.DataSource, v.Default)
 	}
-	stmt := fmt.Sprintf(`INSERT INTO task_tmpl_vars (task_tmpl_id, name, title, comment, form_type, data_source) VALUES %s`, strings.Join(valueStrings, ","))
 
+	stmt := fmt.Sprintf("INSERT INTO task_tmpl_vars (`task_tmpl_id`, `name`, `title`, `comment`, `form_type`, `data_source`, `default`) VALUES %s", strings.Join(valueStrings, ","))
 	if e := tx.Exec(stmt, valueArgs...).Error; e != nil {
 		log.Error("[service] AddTaskTmplVar fail", "error", e.Error())
 		tx.Rollback()

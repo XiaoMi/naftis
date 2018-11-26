@@ -183,7 +183,8 @@ class Istio extends Component {
         formType: item.formType,
         key: index,
         name: item.name,
-        title: item.title
+        title: item.title,
+        default: item.default
       })
     })
     submitParam.vars = vars
@@ -209,6 +210,7 @@ class Istio extends Component {
       item.formType = item.tempFormType
       item.formTypeDesc = item.tempFormTypeDesc
       item.dataSource = item.tempDataSource
+      item.default = item.tempDefault
     } else {
       item.tempName = item.name
       item.tempTitle = item.title
@@ -216,6 +218,7 @@ class Istio extends Component {
       item.tempFormType = item.formType
       item.tempFormTypeDesc = item.formTypeDesc
       item.tempDataSource = item.dataSource
+      item.tempDefault = item.default
     }
     return item
   }
@@ -234,12 +237,12 @@ class Istio extends Component {
       case 'input':
         if (tempKey === 'tempFormType') {
           let formTypeList = JSON.parse(JSON.stringify(this.formTypeList))
-          console.log(formTypeList, 111)
-          console.log('4434232323', tempValue, formTypeList)
           return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={tempValue} style={{ width: '150px' }}
             onChange={(value) => {
               if (value[0]) {
-                console.log(value[0])
+                // change default value if filed is FormType
+                let tempVal = value[0].id === Task.varFormType.PERCENTAGE ? '0' : ''
+                this.changeItem('tempDefault', tempVal, index, value[0].name)
                 this.changeItem(tempKey, value[0].id, index, value[0].name)
               }
             }} />)
@@ -313,7 +316,9 @@ class Istio extends Component {
         dataSource: item.dataSource,
         tempDataSource: item.dataSource,
         opetation: '',
-        tempOpetation: ''
+        tempOpetation: '',
+        default: item.default,
+        tempDefault: item.default
       })
     })
     this.props.setModuleListData(moduleList)
@@ -440,7 +445,9 @@ class Istio extends Component {
         dataSource: '',
         tempDataSource: '',
         opetation: '',
-        tempOpetation: ''
+        tempOpetation: '',
+        default: '',
+        tempDefault: ''
       }
       moduleList.push(moduleItem)
     })
