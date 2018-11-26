@@ -56,7 +56,7 @@ class CreateTask extends Component {
     if (this.tempItem && this.tempItem.varMap && this.tempItem.varMap.length) {
       this.tempItem.varMap.map(item => {
         if (item.name) {
-          this.createItem[item.name] = ''
+          this.createItem[item.name] = item.default
           this.submitParam.tmplID = item.taskTmplID
           let data = []
           for (let i in item.data) {
@@ -189,6 +189,7 @@ class CreateTask extends Component {
                           {
                             item.createList.length ? item.createList.map((v, i) => {
                               let data = JSON.parse(JSON.stringify(v.data))
+                              console.log(item)
                               return (
                                 <FormItem label={v.key + '：'} key={i}>
                                   {
