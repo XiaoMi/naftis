@@ -25,7 +25,7 @@ class Graph extends Component {
 
   getGraphData = () => {
     const {graphData} = this.props
-    if (!graphData) {
+    if (!graphData || !graphData.nodes) {
       return
     }
     graphData && forcegraph.init(graphData)

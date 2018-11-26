@@ -97,7 +97,7 @@ docker.api:
 
 docker.apidebug:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.apidebug<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker build -t $(HUB)/naftis-api:$(TAG) -f ./Dockerfile.api_debug .
+	@docker build -t $(HUB)/naftis-api:debug -f ./Dockerfile.api_debug .
 	@echo -e "\n"
 
 docker.ui:
