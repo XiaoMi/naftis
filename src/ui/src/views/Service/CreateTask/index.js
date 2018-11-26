@@ -78,9 +78,14 @@ class CreateTask extends Component {
     setBreadCrumbs(crumbsItems)
   }
 
-  updateParam = (value, key, index) => {
+  updateParam = (value, key, index, type) => {
     let {createTaskList} = this.props
-    createTaskList[index][key] = value
+    if (type === 'select') {
+      createTaskList[index][key + '__base'] = value
+      createTaskList[index]['__key'] = key
+    } else {
+      createTaskList[index][key] = value
+    }
     this.props.setCreateTaskListData(createTaskList)
   }
 
@@ -230,7 +235,7 @@ class CreateTask extends Component {
                                       style={{margin: '4px 4px', width: '200px'}}
                                       onChange={(value) => {
                                         if (value[0]) {
-                                          this.updateParam(value[0].id, v.key, index)
+                                          this.updateParam(value[0].id, v.key, index, 'select')
                                         }
                                       }} />
                                   }
@@ -323,8 +328,9 @@ class CreateTask extends Component {
                   }
                   createTaskList.map(item => {
                     for (let v in item) {
-                      if (!item[v]) {
-                        this.checkNoneData(item[v], `${v} must not be empty!`)
+                      let val = item[v] ? item[v] : item[v + '__base']
+                      if (!val) {
+                        this.checkNoneData(val, `${v} must not be empty!`)
                         return
                       }
                     }
@@ -351,6 +357,9 @@ class CreateTask extends Component {
                 createTaskList.map((item) => {
                   delete item.createList
                   item = JSON.stringify(item)
+                  if (item[item.__key + '__base']) {
+                    item[item.__key] = item[item.__key + '__base']
+                  }
                   varMaps.push(item)
                 })
                 let dataOptions = {
