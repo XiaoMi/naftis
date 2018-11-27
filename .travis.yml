@@ -19,11 +19,10 @@ before_deploy:
 - make release
 deploy:
   provider: releases
-  skip_cleanup: true
+  file_glob: true
   file:
-  - naftis.yaml
-  - mysql.yaml
-  - mysql-cloud.yaml
+  - release/*
+  skip_cleanup: true
   on:
     tags: true
   api_key:
