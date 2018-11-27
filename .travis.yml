@@ -16,7 +16,8 @@ matrix:
     script:
     - make build.ui
 before_deploy:
-  - make docker push release
+- export HUB=sevennt
+- make docker push release
 deploy:
   provider: releases
   skip_cleanup: true
