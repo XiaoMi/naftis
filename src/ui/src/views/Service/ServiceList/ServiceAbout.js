@@ -101,6 +101,7 @@ class ServiceAbout extends Component {
           )
         }
       },
+      { title: 'Namespace', dataIndex: 'namespace', key: 'namespace' },
       { title: T('app.common.tb.taskCreateTime'), dataIndex: 'operationTime', key: 'operationTime' },
       {
         title: T('app.common.tb.taskOp'),
@@ -112,6 +113,7 @@ class ServiceAbout extends Component {
               <div>
                 <Button type='danger' size='small' key={1} disabled={!row.canRollback} onClick={() => {
                   let dataOptions = {
+                    namespace: row.namespace,
                     content: row.prevState,
                     command: Task.command.ROLLBACK,
                     serviceUID: row.serviceUID
@@ -249,7 +251,6 @@ class ServiceAbout extends Component {
     const { keyPodsInfo = {}, taskInfo = [] } = this.props
     let currentPagePodsList = this.getListFromArea(keyPodsInfo.podsList, keyPodsInfo.page)
     const currentPageTaskList = this.getListFromArea(taskInfo.taskList, taskInfo.page)
-
     return (
       <div className='navMenu-wrap'>
         <div className='component-status'>

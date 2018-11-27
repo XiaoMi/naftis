@@ -3,7 +3,7 @@ mode="debug"
     [logger.console]
         color=true
         prefix="[naftis]"
-        level="Debug"
+        level="Info"
     [logger.zap]
         path="naftis-api.log"
         level="Debug"
