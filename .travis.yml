@@ -9,15 +9,16 @@ matrix:
     - mv ../../XiaoMi ../../xiaomi
     - cd ../../xiaomi/naftis
     script:
-    - make fmt lint vet build.api
+    - export HUB=sevennt
+    - make fmt lint vet build.api docker.api push.api
   - language: node_js
     node_js:
     - 8
     script:
-    - make build.ui
+    - export HUB=sevennt
+    - make build.ui docker.ui push.ui
 before_deploy:
-- export HUB=sevennt
-- make docker push release
+- make release
 deploy:
   provider: releases
   skip_cleanup: true
