@@ -13,6 +13,11 @@ fi
 
 TAG=`$ROOT/tool/tag.sh`
 
+if ! [ -x "$(command -v helm)" ]; then
+  echo 'Error: helm is not installed.'
+  wget -O /tmp/helm.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz && cd /tmp && tar zxvf helm.tar.gz && alias helm=/tmp/linux-amd64/helm
+fi
+
 # generate naftis.yaml from naftis Charts.
 helm template install/helm/naftis --set api.image.repository=$HUB/naftis-api,api.image.tag=$TAG,ui.image.repository=$HUB/naftis-ui,ui.image.tag=$TAG --set-file api.config=$1 --name naftis --namespace naftis > naftis.yaml
 
