@@ -9,14 +9,12 @@ matrix:
     - mv ../../XiaoMi ../../xiaomi
     - cd ../../xiaomi/naftis
     script:
-    - export HUB=sevennt
-    - make fmt lint vet build.api docker.api push.api
+    - make fmt lint vet build.api docker.api docker.login push.api
   - language: node_js
     node_js:
     - 8
     script:
-    - export HUB=sevennt
-    - make build.ui docker.ui push.ui
+    - make build.ui docker.ui docker.login push.ui
 before_deploy:
 - make release
 deploy:
@@ -28,3 +26,9 @@ deploy:
     tags: true
   api_key:
     secure: FWZaLrqb64r2FXPAbfVR0zCQ14IIskkl051fGcpiYWE1eObSUXWdfhHfreFl4vQw8OYd52XcbeeoVFdE9+51s5rUm87VDkdxlpAuZqi2TC43tNsC+FdFGhGfMnmUEPIQJyBt1T4REK5OpKOLvO7bJp3Dm0MNNDM5Jpwcy9aY9wVE6i+qsyRBQtMB/npR3OQPMzja/AeVrsiNg6sxbuQ+FPyQSW2a3oefcTBGj0GhEsOGQm9UDKPLRHx650KTVnRD5l1yftlbd32B7j400GnWoGBkhPWGLskh53srfRZofp3IUcxrQdr74qBI+D7ajnNn0lYlN5ltVscKHxTEjJmb0XSHPnp73QXm3LiS2+z6Ny0Pob36nGvlOFSs7whY3JQGMyJZuqvpqbIPuorJh02u4z542jxkLhZCPRQdhUmTafpTpK2Chd75q6njPMLTIIUj4OtzsIfc6PYAezEa7IYYA1/Co13bOx0hpjC0HX6cwn7PFdORYgNHpFqhYUnSVYqTfSPzHyLf8aDqiEpAjKFaY3d+I0tVBfEsnMejLTOrFUB7EDZ+U4N4/grZf2pwUOjTtf1uiPChBtF+pmn2uiRcI5iww6nfOPnBowVVkBO6p4MgCnf2LihKjqXg75R4I60pb5abwRP1vEeXJKXdqPMqC09VUQQF95sda1IEOS2RzV8=
+env:
+  global:
+    HUB: sevennt
+    DOCKER_USER: sevennt
+    DOCKER_PASSWORD:
+      secure: MC9/NWdBWNvC674k79s4SImtadhSpwyrgbOccWSCHVGqZ/DkoihN9y43r6QGmYT5KGAV8WDX57CM7Gcg2f+VEKOOXrUJ8vrNc/5Js1ccafB7wHf9if9pIfJ51SxDcAtsNa4+8zb6wn+GbRXecjH+vtRA3nh4wLzkkrt81cgMxD+x408w9gjZmZo2BUOttFVzy9M9pnUuTGtJdl9kj+u/a/AWc9xUB9eFabcWMK5/o2rxM2QnzbYdlmXDwcvmZNXoFBfe4MLhR50yB+bjv5EPH+MS21W53nHrQSsTz+0Ak6Ww6frF16TflT+Opp286VCpYjCoY1t1bAYGyXv3ZU/H84Bs+ERreQlMuxugHwSgwSwZd+ZGwdninQrQ9aNA8HrcuX6y+/ncRlLULlmcBAG4Fr4ygsKSoFA4XnLQeJb6m1/1lxgfXeiSMd9BUCTZK5mL5EpLMcpXu92BHNP9MVtRe9wDKDOhQNhqZc0FVn+HSM5rhyrz7qEDFrm/qbn2us6hg8CPO04eeaJksjH1aElUuFN8AQeuxUAWR+Qx+DofMhs1pSmg0SEHxyJ4R2jSZgu1eKbYxMi494rMs0hjkhaPQ+nuy5ok8dlCvHRXwM/FT2jmJ2WXZF9JqXWICZ0OPugpWUbWWVQ1mytftW3QYR2QSTWFQGkn3l/d0DG3QeEi48o=
