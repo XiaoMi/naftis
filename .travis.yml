@@ -19,9 +19,8 @@ before_deploy:
 - make release
 deploy:
   provider: releases
-  file_glob: true
   file:
-  - release/*
+  - manifest.tar.gz
   skip_cleanup: true
   on:
     tags: true
