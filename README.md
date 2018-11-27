@@ -135,6 +135,9 @@ https://github.com/XiaoMi/hiui
 ## Quick Started
 
 ```bash
+# download latest Naftis release files and manifest
+wget -O - https://raw.githubusercontent.com/XiaoMi/naftis/master/tool/getlatest.sh | bash
+
 # deploy Naftis under bare metal Kubernetes
 kubectl create namespace naftis && kubectl apply -n naftis -f mysql.yaml && kubectl apply -n naftis -f naftis.yaml
 
@@ -152,6 +155,9 @@ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o j
 ### Running Under Kubernetes Cluster
 
 ```bash
+# download latest Naftis files and manifest
+wget -O - https://raw.githubusercontent.com/XiaoMi/naftis/master/tool/getlatest.sh | bash
+
 # create Naftis namespace
 $ kubectl create namespace naftis
 

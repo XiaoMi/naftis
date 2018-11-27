@@ -327,7 +327,7 @@ func (k *kubeInfo) Tree() []Tree {
 // sync syncs services data from Kubernetes periodically.
 func (k *kubeInfo) sync() {
 	for {
-		log.Info("[Kube] sync start", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
+		log.Debug("[Kube] sync start", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
 		svcs, err := client.CoreV1().Services(k.namespace).List(metav1.ListOptions{
 			LabelSelector: "provider!=kubernetes",
 		})
@@ -358,7 +358,7 @@ func (k *kubeInfo) sync() {
 		k.namespaces = ns.Items
 		k.mtx.Unlock()
 
-		log.Info("[Kube] sync end", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
+		log.Debug("[Kube] sync end", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
 		time.Sleep(k.syncInterval)
 	}
 }
