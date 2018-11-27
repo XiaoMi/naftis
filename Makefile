@@ -93,6 +93,7 @@ docker: docker.api docker.ui
 docker.api:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.api<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker build -t $(HUB)/naftis-api:$(TAG) -f ./Dockerfile.api .
+	@docker tag $(HUB)/naftis-api:$(TAG) $(HUB)/naftis-api:latest
 	@echo -e "\n"
 
 docker.apidebug:
@@ -103,20 +104,36 @@ docker.apidebug:
 docker.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker build -t $(HUB)/naftis-ui:$(TAG) -f ./Dockerfile.ui .
+	@docker tag $(HUB)/naftis-ui:$(TAG) $(HUB)/naftis-ui:latest
 	@echo -e "\n"
 
-push: push.api push.ui
+docker.login:
+	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.login<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+	@echo -e "\n"
+
+push:
+	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	@make push.api push.ui
+	@echo -e "\n"
 
 push.api:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.api<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker push $(HUB)/naftis-api:latest
 	@docker push $(HUB)/naftis-api:$(TAG)
+	@docker push $(HUB)/naftis-api:latest
 	@echo -e "\n"
 
 push.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker push $(HUB)/naftis-ui:latest
 	@docker push $(HUB)/naftis-ui:$(TAG)
+	@docker push $(HUB)/naftis-ui:latest
+	@echo -e "\n"
+
+release:
+	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	@make build.manifest
+	@rm -rf $(BASE_PATH)/vendor $(BASE_PATH)/src $(BASE_PATH)/dist
+	@rm .gitattributes .gitignore .travis.yml Dockerfile.* Gopkg.* Makefile run
 	@echo -e "\n"
 
 tar:

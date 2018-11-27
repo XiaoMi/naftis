@@ -136,6 +136,9 @@ https://github.com/XiaoMi/hiui
 ## 快速开始
 
 ```bash
+# 下载最新 release 文件和部署清单
+wget -O - https://raw.githubusercontent.com/XiaoMi/naftis/master/tool/getlatest.sh | bash
+
 # 在本地 Kubernetes 集群或 Minikuber 上
 kubectl create namespace naftis && kubectl apply -n naftis -f mysql.yaml && kubectl apply -n naftis -f naftis.yaml
 
@@ -153,6 +156,9 @@ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o j
 ### Kubernetes 集群内运行
 
 ```bash
+# 下载最新 release 文件和部署清单
+wget -O - https://raw.githubusercontent.com/XiaoMi/naftis/master/tool/getlatest.sh | bash
+
 # 创建 Naftis 命名空间
 $ kubectl create namespace naftis
 
