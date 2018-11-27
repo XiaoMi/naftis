@@ -135,6 +135,9 @@ https://github.com/XiaoMi/hiui
 ## Quick Started
 
 ```bash
+# download latest Naftis manifest
+curl -s https://api.github.com/repos/xiaomi/naftis/releases/latest | grep "browser_download_url" | cut -d : -f 2,3 | tr -d \" | wget -qi - && tar zxvf manifest.tar.gz
+
 # deploy Naftis under bare metal Kubernetes
 kubectl create namespace naftis && kubectl apply -n naftis -f mysql.yaml && kubectl apply -n naftis -f naftis.yaml
 
@@ -152,6 +155,9 @@ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o j
 ### Running Under Kubernetes Cluster
 
 ```bash
+# download latest Naftis manifest
+curl -s https://api.github.com/repos/xiaomi/naftis/releases/latest | grep "browser_download_url" | cut -d : -f 2,3 | tr -d \" | wget -qi - && tar zxvf manifest.tar.gz
+
 # create Naftis namespace
 $ kubectl create namespace naftis
 
