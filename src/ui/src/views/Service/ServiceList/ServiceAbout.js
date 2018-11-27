@@ -251,8 +251,6 @@ class ServiceAbout extends Component {
     const { keyPodsInfo = {}, taskInfo = [] } = this.props
     let currentPagePodsList = this.getListFromArea(keyPodsInfo.podsList, keyPodsInfo.page)
     const currentPageTaskList = this.getListFromArea(taskInfo.taskList, taskInfo.page)
-
-    console.log(taskInfo.taskList)
     return (
       <div className='navMenu-wrap'>
         <div className='component-status'>
