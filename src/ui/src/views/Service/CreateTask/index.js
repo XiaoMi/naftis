@@ -194,7 +194,6 @@ class CreateTask extends Component {
                           {
                             item.createList.length ? item.createList.map((v, i) => {
                               let data = JSON.parse(JSON.stringify(v.data))
-                              console.log(item)
                               return (
                                 <FormItem label={v.key + '：'} key={i}>
                                   {
@@ -356,10 +355,12 @@ class CreateTask extends Component {
                 let varMaps = []
                 createTaskList.map((item) => {
                   delete item.createList
-                  item = JSON.stringify(item)
                   if (item[item.__key + '__base']) {
                     item[item.__key] = item[item.__key + '__base']
+                    delete item[item.__key + '__base']
+                    delete item.__key
                   }
+                  item = JSON.stringify(item)
                   varMaps.push(item)
                 })
                 let dataOptions = {

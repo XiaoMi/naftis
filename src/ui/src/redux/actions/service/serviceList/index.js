@@ -113,6 +113,7 @@ const getServiceTaskDataAjax = (key) => {
               prevState: item.prevState,
               serviceUID: item.serviceUID,
               content: item.content,
+              namespace: item.namespace,
               operation: '',
               canRollback: true
             })
