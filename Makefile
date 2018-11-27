@@ -125,8 +125,9 @@ push.ui:
 
 release:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@rm -rf $(BASE_PATH)/vendor $(BASE_PATH)/src $(BASE_PATH)/dist
 	@make build.manifest
+	@rm -rf $(BASE_PATH)/vendor $(BASE_PATH)/src $(BASE_PATH)/dist
+	@rm .gitattributes .gitignore .travis.yml Dockerfile.* Gopkg.* Makefile run
 	@echo -e "\n"
 
 tar:
