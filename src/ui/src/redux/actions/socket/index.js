@@ -48,7 +48,12 @@ const connetctSocket = () => {
   const ws = new Sockette(url, {
     timeout: 5e3,
     maxAttempts: 10,
-    onopen: e => { setSocketStatus(true) },
+    onopen: e => {
+      setSocketStatus(true)
+      window.timerPing = setInterval(() => {
+        ws.send('ping')
+      }, TIMEOUT1)
+    },
     onmessage: e => { socketMessage(e) },
     onreconnect: e => {
       // console.log('Reconnecting...', e)
@@ -59,16 +64,13 @@ const connetctSocket = () => {
     onclose: e => { setSocketStatus(false) },
     onerror: e => {
       clearInterval(window.timerReconnect)
+      clearInterval(window.timerPing)
       window.timerReconnect = setInterval(() => {
         window.sockette && window.sockette.reconnect()
       }, TIMEOUT1)
       setSocketStatus(false)
     }
   })
-  // clearInterval(window.timerPing)
-  // window.timerPing = setInterval(() => {
-  //   ws.send('ping')
-  // }, TIMEOUT2)
   window.sockette = ws
 }
 
