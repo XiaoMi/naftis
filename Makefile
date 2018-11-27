@@ -107,9 +107,13 @@ docker.ui:
 	@docker tag $(HUB)/naftis-ui:$(TAG) $(HUB)/naftis-ui:latest
 	@echo -e "\n"
 
+docker.login:
+	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.login<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	@echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+	@echo -e "\n"
+
 push:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 	@make push.api push.ui
 	@echo -e "\n"
 
