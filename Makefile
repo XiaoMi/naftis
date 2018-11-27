@@ -93,6 +93,7 @@ docker: docker.api docker.ui
 docker.api:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.api<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker build -t $(HUB)/naftis-api:$(TAG) -f ./Dockerfile.api .
+	@docker tag $(HUB)/naftis-api:$(TAG) $(HUB)/naftis-api:latest
 	@echo -e "\n"
 
 docker.apidebug:
@@ -103,6 +104,7 @@ docker.apidebug:
 docker.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making docker.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker build -t $(HUB)/naftis-ui:$(TAG) -f ./Dockerfile.ui .
+	@docker tag $(HUB)/naftis-ui:$(TAG) $(HUB)/naftis-ui:latest
 	@echo -e "\n"
 
 push:
@@ -113,14 +115,14 @@ push:
 
 push.api:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.api<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker push $(HUB)/naftis-api:latest
 	@docker push $(HUB)/naftis-api:$(TAG)
+	@docker push $(HUB)/naftis-api:latest
 	@echo -e "\n"
 
 push.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-	@docker push $(HUB)/naftis-ui:latest
 	@docker push $(HUB)/naftis-ui:$(TAG)
+	@docker push $(HUB)/naftis-ui:latest
 	@echo -e "\n"
 
 release:
