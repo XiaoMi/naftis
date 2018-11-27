@@ -1,6 +1,11 @@
 ---
+# Source: naftis/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: naftis
+---
 # Source: mysql/templates/secrets.yaml
-
 apiVersion: v1
 kind: Secret
 metadata:
@@ -12,15 +17,10 @@ metadata:
     heritage: "Tiller"
 type: Opaque
 data:
-  
   mysql-root-password:  "V2xSbmNHaDNVV1k1VlE9PQ=="
-  
-  
   mysql-password:  "bmFmdGlzSXNBd2Vzb21l"
-  
 ---
 # Source: mysql/templates/initializationFiles-configmap.yaml
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -147,7 +147,6 @@ data:
       KEY `idx_cfgs_deleted_at` (`deleted_at`),
       KEY `task_tmpl_id` (`task_tmpl_id`) USING BTREE
     ) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4;
-    
 ---
 # Source: mysql/templates/tests/test-configmap.yaml
 apiVersion: v1
@@ -164,11 +163,23 @@ data:
     @test "Testing MySQL Connection" {
       mysql --host=naftis-mysql --port=3306 -u root -pWlRncGh3UWY5VQ==
     }
-
-
 ---
 # Source: mysql/templates/pvc.yaml
-
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: naftis-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -185,7 +196,6 @@ spec:
     requests:
       storage: "8Gi"
   storageClassName: "manual"
-
 ---
 # Source: mysql/templates/svc.yaml
 apiVersion: v1
@@ -205,52 +215,6 @@ spec:
     targetPort: mysql
   selector:
     app: naftis-mysql
-
----
-# Source: mysql/templates/tests/test.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: naftis-mysql-test
-  labels:
-    app: naftis-mysql
-    chart: "mysql-0.8.2"
-    heritage: "Tiller"
-    release: "naftis"
-  annotations:
-    "helm.sh/hook": test-success
-spec:
-  initContainers:
-    - name: test-framework
-      image: dduportal/bats:0.4.0
-      command:
-      - "bash"
-      - "-c"
-      - |
-        set -ex
-        # copy bats to tools dir
-        cp -R /usr/local/libexec/ /tools/bats/
-      volumeMounts:
-      - mountPath: /tools
-        name: tools
-  containers:
-    - name: naftis-test
-      image: "mysql:5.7.14"
-      command: ["/tools/bats/bats", "-t", "/tests/run.sh"]
-      volumeMounts:
-      - mountPath: /tests
-        name: tests
-        readOnly: true
-      - mountPath: /tools
-        name: tools
-  volumes:
-  - name: tests
-    configMap:
-      name: naftis-mysql-test
-  - name: tools
-    emptyDir: {}
-  restartPolicy: Never
-
 ---
 # Source: mysql/templates/deployment.yaml
 apiVersion: extensions/v1beta1
@@ -284,7 +248,6 @@ spec:
           requests:
             cpu: 100m
             memory: 256Mi
-          
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -337,6 +300,4 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: naftis-mysql
----
-# Source: mysql/templates/configurationFiles-configmap.yaml
 
