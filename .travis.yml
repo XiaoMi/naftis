@@ -13,3 +13,13 @@ matrix:
     - 8
     script:
     - make build.ui
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: TnoUJCtmpGswGcMCaY7uI6nQFvC/FEHQquYzwomcrDqnKCjK/K3RbThMdlcRofwujUKa992Cf7aLwJtPmXhtzNc6JDq1I/AjOsU0y7pCTKZCEbMbKTRNXHolhTVuWCLsRZJb8ydV5Prw0UqxTZl7dYG1NcUNuljzrHCpLDBSPBHpDTpw7oHClwnmrnn8XiBFPhJUz/KI8976BqgDN3+khGDUVyW79dJ22z8pOxWFZ+OdXYDQHo0ZVJCPHKo80F4YrsqLsWQI/pOki4tD82fFVp1e3ceoYG/ITsVCtKd8OFlZ1JzMaIkN8N3Dfun+7hDQWdJX7Gx0mbIuYTZY3kb+RuEZnOgWIBxskaWqQO5h4njhEVK/qvJJ5iwBuDRk9t9IR4+zPThBSMVSgmKkqgdB9mRHBxahTQk1HfVmZe6UfoYSPLZVcZH0ciEuO4EPuFUBjQd95vsYEKeKWWQ7JOCXTRNokI+g9oJJmbCRJZ78AvdUWOig2GubE5jT9gTsKFgY/H0TSU8pqRBaZXzyqTariFsulEQkZ3usrpHOZrXx51k1m7rpc9epjMk5Y7dgYafza1++oTNIXhbHf0CeLTdT9cUyXgwR+5KEuqMh7SQdVkOwagA3InaKj5u7AWoIkAQ6ekSxekYN4LhhiC6kVLWjQUomlwEMhhbbVNLkKkg9LkA=
+  script: make build.manifest docker push
+  file:
+  - logshare.linux.amd64
+  on:
+    tags: true
