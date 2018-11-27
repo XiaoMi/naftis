@@ -105,7 +105,11 @@ docker.ui:
 	@docker build -t $(HUB)/naftis-ui:$(TAG) -f ./Dockerfile.ui .
 	@echo -e "\n"
 
-push: push.api push.ui
+push:
+	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	@echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+	@make push.api push.ui
+	@echo -e "\n"
 
 push.api:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.api<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
@@ -117,6 +121,12 @@ push.ui:
 	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 	@docker push $(HUB)/naftis-ui:latest
 	@docker push $(HUB)/naftis-ui:$(TAG)
+	@echo -e "\n"
+
+release:
+	@echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>making push.ui<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+	@rm -rf $(BASE_PATH)/vendor $(BASE_PATH)/src $(BASE_PATH)/dist
+	@make build.manifest
 	@echo -e "\n"
 
 tar:
