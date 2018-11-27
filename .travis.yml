@@ -15,10 +15,11 @@ matrix:
     - 8
     script:
     - make build.ui
+before_deploy:
+  - make docker push release
 deploy:
   provider: releases
   skip_cleanup: true
-  script: make docker push release
   file:
   - logshare.linux.amd64
   on:
