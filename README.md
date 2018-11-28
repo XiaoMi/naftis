@@ -135,7 +135,7 @@ https://github.com/XiaoMi/hiui
 ## Quick Started
 
 ```bash
-# download latest Naftis release files and  manifest
+# download latest Naftis release files and manifest
 wget -O - https://raw.githubusercontent.com/XiaoMi/naftis/master/tool/getlatest.sh | bash
 
 # deploy Naftis under bare metal Kubernetes
