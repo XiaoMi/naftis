@@ -9,12 +9,14 @@ matrix:
     - mv ../../XiaoMi ../../xiaomi
     - cd ../../xiaomi/naftis
     script:
-    - make fmt lint vet build.api docker.api docker.login push.api # TODO disable build and push images in develop or master
+    - make fmt lint vet build.api
+    - if [ -n "$TRAVIS_TAG" ]; then make docker.api docker.login push.api; fi
   - language: node_js
     node_js:
     - 8
     script:
-    - make build.ui docker.ui docker.login push.ui # TODO disable build and push images in develop or master
+    - make build.ui
+    - if [ -n "$TRAVIS_TAG" ]; then make docker.ui docker.login push.ui; fi
 before_deploy:
 - make release
 deploy:
