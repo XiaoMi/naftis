@@ -9,18 +9,19 @@ matrix:
     - mv ../../XiaoMi ../../xiaomi
     - cd ../../xiaomi/naftis
     script:
-    - make fmt lint vet build.api
+    - make fmt lint vet build.api docker.api docker.login push.api # TODO disable build and push images in develop or master
   - language: node_js
     node_js:
     - 8
     script:
-    - make build.ui
+    - make build.ui docker.ui docker.login push.ui # TODO disable build and push images in develop or master
 before_deploy:
-- make docker docker.login push release
+- make release
 deploy:
   provider: releases
   file:
   - manifest.tar.gz
+  overwrite: true
   skip_cleanup: true
   on:
     tags: true
