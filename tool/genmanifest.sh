@@ -46,4 +46,5 @@ spec:
 ' > mysql.yaml
 helm template install/helm/mysql --set persistence.storageClass="manual",mysqlRootPassword="WlRncGh3UWY5VQ==",mysqlUser="naftis",mysqlPassword="naftisIsAwesome" --set-file initializationFiles."naftis\.sql"=tool/naftis.sql  --name naftis --namespace naftis >> mysql.yaml
 
-tar zcvf manifest.tar.gz $ROOT/naftis.yaml $ROOT/mysql.yaml $ROOT/mysql-cloud.yaml
+mkdir -p $ROOT/manifest && cd $ROOT
+tar zcvf manifest.tar.gz naftis.yaml mysql.yaml mysql-cloud.yaml
