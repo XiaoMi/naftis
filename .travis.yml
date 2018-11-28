@@ -9,14 +9,14 @@ matrix:
     - mv ../../XiaoMi ../../xiaomi
     - cd ../../xiaomi/naftis
     script:
-    - make fmt lint vet build.api docker.api docker.login push.api
+    - make fmt lint vet build.api
   - language: node_js
     node_js:
     - 8
     script:
-    - make build.ui docker.ui docker.login push.ui
+    - make build.ui
 before_deploy:
-- make release
+- make docker docker.login push release
 deploy:
   provider: releases
   file:
