@@ -54,7 +54,7 @@ var (
 	addTask = func(task *Task) (e error) {
 		e = db.AddTask(task.TaskTmplID, task.Content, task.Operator, task.ServiceUID, task.PrevState, task.Namespace, task.Status)
 		if e != nil {
-			log.Error("[executor] addTask fail", "err", e)
+			log.Error("[executor] addTask fail", "task", task, "error", e)
 		}
 		Push2TaskStatusCh(*task)
 		return
@@ -82,10 +82,10 @@ func (i *istiocrdExecutor) create(varr []istiomodel.Config, task *Task) (errs er
 		var rev string
 		if rev, err = i.client.Create(config); err != nil {
 			// if the config create fail, break loop and return error
-			log.Info("Created config fail", "config", config.Key(), "error", err)
+			log.Info("Created config fail", "key", config.Key(), "config", config, "error", err)
 			return err
 		}
-		log.Info("Created config success", "config", config.Key(), "revision", rev)
+		log.Info("Created config success", "key", config.Key(), "revision", rev, "config", config)
 	}
 	return nil
 }
@@ -118,10 +118,10 @@ func (i *istiocrdExecutor) replace(varr []istiomodel.Config, task *Task) (errs e
 		var newRev string
 		if newRev, err = i.client.Update(config); err != nil {
 			// if the config create fail, break loop and return error
-			log.Info("Replace config fail", "config", config.Key(), "error", err, "config", config)
+			log.Info("Replace config fail", "key", config.Key(), "config", config, "error", err)
 			return err
 		}
-		log.Info("Replace config success", "config", config.Key(), "revision", newRev, "config", config)
+		log.Info("Replace config success", "key", config.Key(), "config", config, "revision", newRev)
 	}
 
 	return nil
@@ -135,11 +135,11 @@ func (i *istiocrdExecutor) delete(varr []istiomodel.Config, task *Task) (errs er
 		}
 
 		if err := i.client.Delete(config.Type, config.Name, config.Namespace); err != nil {
-			log.Info("Delete config fail", "config", config.Key(), "error", err)
+			log.Info("Delete config fail", "key", config.Key(), "config", config, "error", err)
 			// if the config delete fail, continue loop
 			errs = multierror.Append(errs, fmt.Errorf("cannot delete %s: %v", config.Key(), err))
 		} else {
-			log.Info("Delete config success", "config", config.Key())
+			log.Info("Delete config success", "key", config.Key(), "config", config)
 		}
 	}
 	return nil
