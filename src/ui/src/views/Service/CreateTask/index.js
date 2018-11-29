@@ -122,7 +122,13 @@ class CreateTask extends Component {
     }]
 
     let taskItem = taskList[0]
-    // delete taskItem.createList
+    // TODO delete __base
+    for (let key in taskItem) {
+      let matches = key.match(/(\w+)__base/i)
+      if (matches !== null) {
+        taskItem[matches[1]] = taskItem[key]
+      }
+    }
     for (let i in taskItem) {
       let columnsItem = {}
       if (i !== 'createList') {
