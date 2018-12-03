@@ -121,9 +121,6 @@ class Istio extends Component {
                   return
                 }
                 moduleList[index].type = 'label'
-
-                // In order to solve can't change value in Select component of HIUI，so I add tempFormTypeId to save the value For the time being,
-                if (moduleList[index].tempFormTypeId) moduleList[index].tempFormType = moduleList[index].tempFormTypeId
                 moduleList[index] = this.setValueForModule(moduleList[index], true)
                 this.props.setModuleListData(moduleList)
               }}>Save</Button>&nbsp;&nbsp;
@@ -240,9 +237,6 @@ class Istio extends Component {
           return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={tempValue} style={{ width: '150px' }}
             onChange={(value) => {
               if (value[0]) {
-                // change default value if filed is FormType
-                let tempVal = value[0].id === Task.varFormType.PERCENTAGE ? '0' : ''
-                this.changeItem('tempDefault', tempVal, index, value[0].name)
                 this.changeItem(tempKey, value[0].id, index, value[0].name)
               }
             }} />)
@@ -263,11 +257,9 @@ class Istio extends Component {
 
   changeItem = (tempKey, value, index, desc) => {
     let moduleList = [...this.props.moduleList]
+    moduleList[index][tempKey] = value
     if (tempKey === 'tempFormType') {
       moduleList[index].tempFormTypeDesc = desc
-      moduleList[index].tempFormTypeId = value
-    } else {
-      moduleList[index][tempKey] = value
     }
 
     this.props.setModuleListData(moduleList)

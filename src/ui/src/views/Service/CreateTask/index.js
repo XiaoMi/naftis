@@ -15,6 +15,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Stepper, Panel, Input, Select, DatePicker, Icon, handleNotificate, Table, Form, Button, Alert, Counter } from '@hi-ui/hiui/es'
+import '@hi-ui/hiui/es/table/style/index.css'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/createTask'
 import * as TaskTemplateActions from '../../../redux/actions/service/taskTemplate'
