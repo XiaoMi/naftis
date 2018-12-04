@@ -18,6 +18,7 @@ import AceEditor from 'react-ace'
 import 'brace/mode/yaml'
 import 'brace/theme/monokai'
 import { Table, Modal, Input, Select, Form, Button, handleNotificate, Icon, Tooltip } from '@hi-ui/hiui/es'
+import '@hi-ui/hiui/es/table/style/index.css'
 import { Task } from '../../../commons/consts'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/taskTemplate'
@@ -121,9 +122,6 @@ class Istio extends Component {
                   return
                 }
                 moduleList[index].type = 'label'
-
-                // In order to solve can't change value in Select component of HIUI，so I add tempFormTypeId to save the value For the time being,
-                if (moduleList[index].tempFormTypeId) moduleList[index].tempFormType = moduleList[index].tempFormTypeId
                 moduleList[index] = this.setValueForModule(moduleList[index], true)
                 this.props.setModuleListData(moduleList)
               }}>Save</Button>&nbsp;&nbsp;
@@ -240,9 +238,10 @@ class Istio extends Component {
           return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={tempValue} style={{ width: '150px' }}
             onChange={(value) => {
               if (value[0]) {
-                // change default value if filed is FormType
-                let tempVal = value[0].id === Task.varFormType.PERCENTAGE ? '0' : ''
-                this.changeItem('tempDefault', tempVal, index, value[0].name)
+                // if form type of item is NUMBER or PERCENTAGE, change it's default value to '0'.
+                if (value[0].id === Task.varFormType.NUMBER || value[0].id === Task.varFormType.PERCENTAGE) {
+                  this.changeItem('tempDefault', '0', index, value[0].name)
+                }
                 this.changeItem(tempKey, value[0].id, index, value[0].name)
               }
             }} />)
@@ -263,11 +262,9 @@ class Istio extends Component {
 
   changeItem = (tempKey, value, index, desc) => {
     let moduleList = [...this.props.moduleList]
+    moduleList[index][tempKey] = value
     if (tempKey === 'tempFormType') {
       moduleList[index].tempFormTypeDesc = desc
-      moduleList[index].tempFormTypeId = value
-    } else {
-      moduleList[index][tempKey] = value
     }
 
     this.props.setModuleListData(moduleList)
@@ -323,6 +320,7 @@ class Istio extends Component {
     })
     this.props.setModuleListData(moduleList)
     this.setState({ showModal: true })
+    this.resetModalStyle()
   }
 
   deleteItem = (item) => {
@@ -463,6 +461,14 @@ class Istio extends Component {
     )
   }
 
+  resetModalStyle = () => {
+    // to fixed Bug in HIUI - Select，if HIUI fixed the bug , we can delete the code
+    let modalNode = document.getElementsByClassName('hi-modal')[0]
+    let scrollTop = document.documentElement.scrollTop
+    modalNode.style.cssText = 'position: absolute; top: ' + scrollTop + 'px;height: 100%'
+    // fixed end
+  }
+
   // Template List
   // you can do add, watch, view, createTask and delete on template item
   renderCenter = () => {
@@ -522,6 +528,7 @@ class Istio extends Component {
                       showModal: true,
                       currentType: 'ADD'
                     })
+                    this.resetModalStyle()
                   }}>
                     <p>+ {T('app.common.newTpl')}</p>
                   </div>

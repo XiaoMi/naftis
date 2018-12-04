@@ -15,6 +15,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Stepper, Panel, Input, Select, DatePicker, Icon, handleNotificate, Table, Form, Button, Alert, Counter } from '@hi-ui/hiui/es'
+import '@hi-ui/hiui/es/table/style/index.css'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/createTask'
 import * as TaskTemplateActions from '../../../redux/actions/service/taskTemplate'
@@ -78,14 +79,9 @@ class CreateTask extends Component {
     setBreadCrumbs(crumbsItems)
   }
 
-  updateParam = (value, key, index, type) => {
+  updateParam = (value, key, index) => {
     let {createTaskList} = this.props
-    if (type === 'select') {
-      createTaskList[index][key + '__base'] = value
-      createTaskList[index]['__key'] = key
-    } else {
-      createTaskList[index][key] = value
-    }
+    createTaskList[index][key] = value
     this.props.setCreateTaskListData(createTaskList)
   }
 
@@ -122,13 +118,7 @@ class CreateTask extends Component {
     }]
 
     let taskItem = taskList[0]
-    // TODO delete __base
-    for (let key in taskItem) {
-      let matches = key.match(/(\w+)__base/i)
-      if (matches !== null) {
-        taskItem[matches[1]] = taskItem[key]
-      }
-    }
+    // delete taskItem.createList
     for (let i in taskItem) {
       let columnsItem = {}
       if (i !== 'createList') {
@@ -240,7 +230,7 @@ class CreateTask extends Component {
                                       style={{margin: '4px 4px', width: '200px'}}
                                       onChange={(value) => {
                                         if (value[0]) {
-                                          this.updateParam(value[0].id, v.key, index, 'select')
+                                          this.updateParam(value[0].id, v.key, index)
                                         }
                                       }} />
                                   }
@@ -296,7 +286,7 @@ class CreateTask extends Component {
               </div> : null
           }
           {
-            currentStep === 2 && createStatus.code === 1
+            currentStep === 2 && createStatus.code !== 0
               ? <div className='varInfo'>
                 <Alert content='Fail, please check form and submit again.' type='error' closeable={false} />
                 <div>
@@ -333,9 +323,9 @@ class CreateTask extends Component {
                   }
                   createTaskList.map(item => {
                     for (let v in item) {
-                      let val = item[v] ? item[v] : item[v + '__base']
-                      if (!val) {
-                        this.checkNoneData(val, `${v} must not be empty!`)
+                      // TODO move validator to form element filed
+                      if (!item[v] && item[v] !== 0) {
+                        this.checkNoneData(item[v], `${v} must not be empty!`)
                         return
                       }
                     }
@@ -361,11 +351,6 @@ class CreateTask extends Component {
                 let varMaps = []
                 createTaskList.map((item) => {
                   delete item.createList
-                  if (item[item.__key + '__base']) {
-                    item[item.__key] = item[item.__key + '__base']
-                    delete item[item.__key + '__base']
-                    delete item.__key
-                  }
                   item = JSON.stringify(item)
                   varMaps.push(item)
                 })
@@ -395,6 +380,7 @@ class CreateTask extends Component {
               ? <Button
                 style={{marginRight: 10}}
                 type='danger'
+                // TODO change SUCCESS comment when socketData.status is not equal Task.status.SUCCESS.
                 disabled={!socketData || socketData.status !== Task.status.SUCCESS || socketData.command === Task.commandint.ROLLBACK}
                 onClick={() => {
                   let varMaps = []

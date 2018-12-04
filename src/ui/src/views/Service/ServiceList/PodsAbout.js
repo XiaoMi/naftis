@@ -15,6 +15,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Table, Panel, Pagination } from '@hi-ui/hiui/es'
+import '@hi-ui/hiui/es/table/style/index.css'
 import Graph from './Graph'
 import * as Actions from '../../../redux/actions/service/serviceList'
 import './index.scss'

@@ -15,6 +15,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Table, Panel, Button, Pagination, handleNotificate, Modal, Form } from '@hi-ui/hiui/es'
+import '@hi-ui/hiui/es/table/style/index.css'
 import AceEditor from 'react-ace'
 import { Task } from '../../../commons/consts'
 import * as createTaskActions from '../../../redux/actions/service/createTask'
