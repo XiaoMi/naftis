@@ -15,6 +15,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Table, Panel } from '@hi-ui/hiui/es'
+import '@hi-ui/hiui/es/table/style/index.css'
 import { setBreadCrumbs } from '../../redux/actions/global'
 import * as Actions from '../../redux/actions/istio'
 import './index.scss'
@@ -60,7 +61,6 @@ class Istio extends Component {
       {title: T('app.common.tb.podRestarts'), dataIndex: 'restarts', key: 'restarts'},
       {title: T('app.common.tb.podAge'), dataIndex: 'age', key: 'age'}]
   }
-
   componentDidMount () {
     this.props.getDiagnosisDataAjax()
     const crumbsItems = [

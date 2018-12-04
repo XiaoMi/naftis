@@ -18,6 +18,7 @@ import AceEditor from 'react-ace'
 import 'brace/mode/yaml'
 import 'brace/theme/monokai'
 import { Table, Modal, Input, Select, Form, Button, handleNotificate, Icon, Tooltip } from '@hi-ui/hiui/es'
+import '@hi-ui/hiui/es/table/style/index.css'
 import { Task } from '../../../commons/consts'
 import { setBreadCrumbs } from '../../../redux/actions/global'
 import * as Actions from '../../../redux/actions/service/taskTemplate'
@@ -315,6 +316,7 @@ class Istio extends Component {
     })
     this.props.setModuleListData(moduleList)
     this.setState({ showModal: true })
+    this.resetModalStyle()
   }
 
   deleteItem = (item) => {
@@ -455,6 +457,14 @@ class Istio extends Component {
     )
   }
 
+  resetModalStyle = () => {
+    // to fixed Bug in HIUI - Select，if HIUI fixed the bug , we can delete the code
+    let modalNode = document.getElementsByClassName('hi-modal')[0]
+    let scrollTop = document.documentElement.scrollTop
+    modalNode.style.cssText = 'position: absolute; top: ' + scrollTop + 'px;height: 100%'
+    // fixed end
+  }
+
   // Template List
   // you can do add, watch, view, createTask and delete on template item
   renderCenter = () => {
@@ -514,6 +524,7 @@ class Istio extends Component {
                       showModal: true,
                       currentType: 'ADD'
                     })
+                    this.resetModalStyle()
                   }}>
                     <p>+ {T('app.common.newTpl')}</p>
                   </div>

@@ -79,14 +79,9 @@ class CreateTask extends Component {
     setBreadCrumbs(crumbsItems)
   }
 
-  updateParam = (value, key, index, type) => {
+  updateParam = (value, key, index) => {
     let {createTaskList} = this.props
-    if (type === 'select') {
-      createTaskList[index][key + '__base'] = value
-      createTaskList[index]['__key'] = key
-    } else {
-      createTaskList[index][key] = value
-    }
+    createTaskList[index][key] = value
     this.props.setCreateTaskListData(createTaskList)
   }
 
@@ -123,13 +118,7 @@ class CreateTask extends Component {
     }]
 
     let taskItem = taskList[0]
-    // TODO delete __base
-    for (let key in taskItem) {
-      let matches = key.match(/(\w+)__base/i)
-      if (matches !== null) {
-        taskItem[matches[1]] = taskItem[key]
-      }
-    }
+    // delete taskItem.createList
     for (let i in taskItem) {
       let columnsItem = {}
       if (i !== 'createList') {
@@ -241,7 +230,7 @@ class CreateTask extends Component {
                                       style={{margin: '4px 4px', width: '200px'}}
                                       onChange={(value) => {
                                         if (value[0]) {
-                                          this.updateParam(value[0].id, v.key, index, 'select')
+                                          this.updateParam(value[0].id, v.key, index)
                                         }
                                       }} />
                                   }
@@ -334,9 +323,8 @@ class CreateTask extends Component {
                   }
                   createTaskList.map(item => {
                     for (let v in item) {
-                      let val = item[v] ? item[v] : item[v + '__base']
-                      if (!val) {
-                        this.checkNoneData(val, `${v} must not be empty!`)
+                      if (!item[v]) {
+                        this.checkNoneData(item[v], `${v} must not be empty!`)
                         return
                       }
                     }
@@ -362,11 +350,6 @@ class CreateTask extends Component {
                 let varMaps = []
                 createTaskList.map((item) => {
                   delete item.createList
-                  if (item[item.__key + '__base']) {
-                    item[item.__key] = item[item.__key + '__base']
-                    delete item[item.__key + '__base']
-                    delete item.__key
-                  }
                   item = JSON.stringify(item)
                   varMaps.push(item)
                 })
