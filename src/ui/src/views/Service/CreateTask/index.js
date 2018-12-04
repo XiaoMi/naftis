@@ -286,7 +286,7 @@ class CreateTask extends Component {
               </div> : null
           }
           {
-            currentStep === 2 && createStatus.code === 1
+            currentStep === 2 && createStatus.code !== 0
               ? <div className='varInfo'>
                 <Alert content='Fail, please check form and submit again.' type='error' closeable={false} />
                 <div>
@@ -323,7 +323,8 @@ class CreateTask extends Component {
                   }
                   createTaskList.map(item => {
                     for (let v in item) {
-                      if (!item[v]) {
+                      // TODO move validator to form element filed
+                      if (!item[v] && item[v] !== 0) {
                         this.checkNoneData(item[v], `${v} must not be empty!`)
                         return
                       }
@@ -379,6 +380,7 @@ class CreateTask extends Component {
               ? <Button
                 style={{marginRight: 10}}
                 type='danger'
+                // TODO change SUCCESS comment when socketData.status is not equal Task.status.SUCCESS.
                 disabled={!socketData || socketData.status !== Task.status.SUCCESS || socketData.command === Task.commandint.ROLLBACK}
                 onClick={() => {
                   let varMaps = []

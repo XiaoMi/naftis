@@ -238,6 +238,10 @@ class Istio extends Component {
           return (<Select key={index} mode='single' list={formTypeList} searchable placeholder='' value={tempValue} style={{ width: '150px' }}
             onChange={(value) => {
               if (value[0]) {
+                // if form type of item is NUMBER or PERCENTAGE, change it's default value to '0'.
+                if (value[0].id === Task.varFormType.NUMBER || value[0].id === Task.varFormType.PERCENTAGE) {
+                  this.changeItem('tempDefault', '0', index, value[0].name)
+                }
                 this.changeItem(tempKey, value[0].id, index, value[0].name)
               }
             }} />)
