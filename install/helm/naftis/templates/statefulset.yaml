@@ -43,15 +43,6 @@ spec:
           volumeMounts:
             - name: {{ .Release.Namespace }}-config
               mountPath: /etc/naftis/config
-        - name: reloader
-          image: {{ .Values.reloader.image.repository }}:{{ .Values.reloader.image.tag }}
-          imagePullPolicy: {{ .Values.reloader.image.pullPolicy }}
-          args:
-            - --config.promviz-reload-url=http://localhost:{{ .Values.api.service.internalPort }}/reload
-            - --config.promviz-config-dir=/etc/naftis
-            - --config.log-level=info
-          resources:
-{{ toYaml .Values.reloader.resources | indent 12 }}
       volumes:
         - name: {{ .Release.Namespace }}-config
           configMap:
