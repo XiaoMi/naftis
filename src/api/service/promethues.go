@@ -292,7 +292,7 @@ func generateServiceFilter(opts genOpts) string {
 		filterParams = append(filterParams, "destination_workload=\""+opts.dstWorkload+"\"")
 	}
 	if opts.srcNamespace != "" {
-		filterParams = append(filterParams, "source_namespace=\""+opts.srcNamespace+"\"")
+		filterParams = append(filterParams, "source_workload_namespace=\""+opts.srcNamespace+"\"")
 	}
 	if opts.srcWorkload != "" {
 		filterParams = append(filterParams, "source_workload=\""+opts.srcWorkload+"\"")
