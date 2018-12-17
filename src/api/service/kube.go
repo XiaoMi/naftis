@@ -343,18 +343,20 @@ func (k *kubeInfo) sync() {
 			log.Error("[k8s] get namespaces err", "err", err)
 		}
 		k.mtx.Lock()
-		k.services = make([]service, 0, len(svcs.Items))
+		services := make([]service, 0, len(svcs.Items))
 		k.wg.Add(len(svcs.Items))
 		for _, i := range svcs.Items {
 			go func(i v1.Service) {
 				s := service{}
 				s.Service = i
 				s.Pods = k.Pods(i.Spec.Selector)
-				k.services = append(k.services, s)
+				services = append(services, s)
 				k.wg.Done()
 			}(i)
 		}
 		k.wg.Wait()
+		k.mtx.Lock()
+		k.services = services
 		k.namespaces = ns.Items
 		k.mtx.Unlock()
 
