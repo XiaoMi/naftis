@@ -26,7 +26,7 @@ func ListMetrics(c *gin.Context) {
 		"code": 0,
 		"data": map[string]interface{}{
 			"serviceCount": len(service.ServiceInfo.Services("").Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)),
-			"podCount":     len(service.ServiceInfo.Pods(map[string]string{}).Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)),
+			"podCount":     len(service.ServiceInfo.Pods().Exclude("kube-system", bootstrap.Args.IstioNamespace, bootstrap.Args.Namespace)),
 		},
 	})
 }

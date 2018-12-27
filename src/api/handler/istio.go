@@ -31,7 +31,7 @@ func ListStatus(c *gin.Context) {
 	log.Info("[API] /api/diagnose Services end", "ts", time.Now())
 
 	log.Info("[API] /api/diagnose Pods start", "ts", time.Now())
-	pods := service.IstioInfo.Pods(map[string]string{}).Status()
+	pods := service.IstioInfo.Pods().Status()
 	log.Info("[API] /api/diagnose Pods end", "ts", time.Now())
 
 	c.JSON(200, gin.H{
