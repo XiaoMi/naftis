@@ -46,6 +46,7 @@ type kubeInfo struct {
 	mtx          *sync.RWMutex
 	wg           *sync.WaitGroup
 	services     []service
+	pods         []v1.Pod
 	namespaces   []v1.Namespace
 	syncInterval time.Duration
 	namespace    string
@@ -236,7 +237,7 @@ func (p services) Status() []KubeServiceStatus {
 	return components
 }
 
-func (k *kubeInfo) Pods(labels map[string]string) pods {
+func (k *kubeInfo) podsFromK8S(labels map[string]string) pods {
 	pods := make([]v1.Pod, 0)
 	ls := ""
 	if len(labels) != 0 {
@@ -257,22 +258,28 @@ func (k *kubeInfo) Pods(labels map[string]string) pods {
 	return p.Items
 }
 
+func (k *kubeInfo) Pods() pods {
+	k.mtx.RLock()
+	defer k.mtx.RUnlock()
+
+	return k.pods
+}
+
 func (k *kubeInfo) PodsByName(name string) pods {
+	k.mtx.RLock()
+	defer k.mtx.RUnlock()
+
+	if name == "" {
+		return k.pods
+	}
+
 	retPods := make([]v1.Pod, 0)
-
-	l := metav1.ListOptions{}
-	if name != "" {
-		l.FieldSelector = "metadata.name=" + name
+	for _, p := range k.pods {
+		if p.Name == name {
+			retPods = append(retPods, p)
+		}
 	}
-
-	p, err := client.CoreV1().Pods(k.namespace).List(l)
-
-	if err != nil {
-		log.Error("[k8s] get retPods fail", "err", err)
-		return retPods
-	}
-
-	return p.Items
+	return retPods
 }
 
 type pods []v1.Pod
@@ -342,21 +349,47 @@ func (k *kubeInfo) sync() {
 			// panic(err.Error())
 			log.Error("[k8s] get namespaces err", "err", err)
 		}
-		services := make([]service, 0, len(svcs.Items))
+
+		// get services' and pods' data from Kubernetes
+		var serviceCh = make(chan service, 200)
+		var podCh = make(chan v1.Pod, 100)
+
 		k.wg.Add(len(svcs.Items))
 		for _, i := range svcs.Items {
 			go func(i v1.Service) {
 				s := service{}
 				s.Service = i
-				s.Pods = k.Pods(i.Spec.Selector)
-				services = append(services, s)
+				s.Pods = k.podsFromK8S(i.Spec.Selector)
+				for _, p := range s.Pods {
+					podCh <- p
+				}
+				serviceCh <- s
 				k.wg.Done()
 			}(i)
 		}
-		k.wg.Wait()
+		go func() {
+			k.wg.Wait()
+			close(serviceCh)
+			close(podCh)
+		}()
+
+		services := make([]service, 0, len(svcs.Items))
+		for s := range serviceCh {
+			services = append(services, s)
+		}
+
+		tmpPods := make(map[string]v1.Pod)
+		pods := make(pods, 0)
+		for p := range podCh {
+			if _, ok := tmpPods[string(p.UID)]; !ok {
+				pods = append(pods, p)
+			}
+		}
+
 		k.mtx.Lock()
 		k.services = services
 		k.namespaces = ns.Items
+		k.pods = pods
 		k.mtx.Unlock()
 
 		log.Debug("[Kube] sync end", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
