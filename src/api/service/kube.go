@@ -352,39 +352,32 @@ func (k *kubeInfo) sync() {
 
 		// get services' and pods' data from Kubernetes
 		var serviceCh = make(chan service, 200)
-		var podCh = make(chan v1.Pod, 100)
-
 		k.wg.Add(len(svcs.Items))
 		for _, i := range svcs.Items {
 			go func(i v1.Service) {
 				s := service{}
 				s.Service = i
 				s.Pods = k.podsFromK8S(i.Spec.Selector)
-				for _, p := range s.Pods {
-					podCh <- p
-				}
 				serviceCh <- s
-				k.wg.Done()
 			}(i)
 		}
-		go func() {
-			k.wg.Wait()
-			close(serviceCh)
-			close(podCh)
-		}()
 
 		services := make([]service, 0, len(svcs.Items))
-		for s := range serviceCh {
-			services = append(services, s)
-		}
-
 		tmpPods := make(map[string]v1.Pod)
 		pods := make(pods, 0)
-		for p := range podCh {
-			if _, ok := tmpPods[string(p.UID)]; !ok {
-				pods = append(pods, p)
+		go func() {
+			for s := range serviceCh {
+				services = append(services, s)
+				for _, p := range s.Pods {
+					if _, ok := tmpPods[string(p.UID)]; !ok {
+						pods = append(pods, p)
+					}
+				}
+				k.wg.Done()
 			}
-		}
+		}()
+		k.wg.Wait()
+		close(serviceCh)
 
 		k.mtx.Lock()
 		k.services = services
