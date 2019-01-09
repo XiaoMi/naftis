@@ -15,11 +15,10 @@
 package handler
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/xiaomi/naftis/src/api/bootstrap"
 	"github.com/xiaomi/naftis/src/api/service"
 	"github.com/xiaomi/naftis/src/api/util"
-
-	"github.com/gin-gonic/gin"
 )
 
 // Services returns all available services.
