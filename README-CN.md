@@ -8,107 +8,6 @@
 Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来帮助用户更方便地执行 Istio 任务。
 用户可以在 Naftis 中定义自己的任务模板，并填充变量来构造单个或多个构造任务实例，从而完成各种服务治理功能。
 
-## 文档
-
-<!-- TOC -->
-
-- [Naftis](#naftis)
-  - [文档](#文档)
-  - [代码结构](#代码结构)
-  - [功能](#功能)
-  - [依赖](#依赖)
-    - [HIUI](#HIUI)
-  - [快速开始](#快速开始)
-  - [详细的部署流程](#详细的部署流程)
-    - [Kubernetes 集群内运行](#kubernetes-集群内运行)
-    - [本地运行](#本地运行)
-      - [数据移植](#数据移植)
-    - [启动 API 服务](#启动-api-服务)
-      - [配置 Nginx 代理](#配置-nginx-代理)
-      - [启动前端 Node 代理](#启动前端-node-代理)
-  - [预览](#预览)
-    - [Dashboard](#dashboard)
-    - [服务管理](#服务管理)
-      - [服务详情](#服务详情)
-      - [服务 Pod 和拓扑图等](#服务-pod-和拓扑图等)
-    - [任务模板管理](#任务模板管理)
-      - [任务模板列表](#任务模板列表)
-      - [查看指定模板](#查看指定模板)
-      - [新增模板](#新增模板)
-      - [创建任务](#创建任务)
-      - [Istio 诊断](#istio-诊断)
-  - [Docker 镜像](#docker-镜像)
-  - [开发者指南](#开发者指南)
-    - [获取源码](#获取源码)
-    - [配置环境变量](#配置环境变量)
-    - [Go 依赖](#go-依赖)
-    - [代码风格](#代码风格)
-  - [其他指令](#其他指令)
-  - [架构](#架构)
-  - [TODO 列表](#todo-列表)
-
-<!-- /TOC -->
-
-## 代码结构
-
-```bash
-.
-├── bin                         # 存放编译好的 Go 二进制文件
-├── config                      # 存放配置文件
-│   ├── in-cluster.toml         # 在 Kubernetes 集群中启动的配置
-│   └── in-local.toml           # 本地启动的配置
-├── install                     # Helm Charts
-│   └── helm
-│       ├── mysql
-│       └── naftis
-├── src                         # 源码
-│   ├── api                     # 后端 Go API 服务源码
-│   │   ├── bootstrap           # 启动 Go API 服务相关参数包
-│   │   ├── executor            # task 队列执行器
-│   │   ├── handler             # HTTP handlers
-│   │   ├── log                 # 基于 zap 封装的 log 包
-│   │   ├── middleware          # HTTP 中间件
-│   │   ├── model               # 全局通用 model
-│   │   ├── router              # HTTP 路由
-│   │   ├── service             # 封装好的服务
-│   │   ├── storer              # db storer
-│   │   ├── util                # 工具类包
-│   │   ├── version             # 提供运行时的版本信息等显示的支持
-│   │   ├── worker              # task worker
-│   │   └── main.go             # Go API 入口
-│   └── ui                      # 前端源码
-│       ├── build               # Webpack 打包脚本
-│       ├── src                 # 前端 js 源码
-│       ├── package.json
-│       ├── package-lock.json
-│       ├── postcss.config.js
-│       ├── README-CN.md
-│       └── README.md
-├── tool                        # Makefile 可能会用到的一些编译脚本
-│   ├── img
-│   ├── apppkg.sh
-│   ├── build.sh
-│   ├── cleanup.sh              # 清理 Naftis
-│   ├── conn.sh
-│   ├── genmanifest.go          # 生成 Kubernetes 部署清单
-│   ├── gentmpl.go
-│   ├── naftis.sql              # Naftis 数据迁移脚本
-│   ├── naftis.conf             # Naftis Nginx 配置文件
-│   └── version.sh
-├── vendor                      # Go 依赖
-├── Dockerfile.api              # 编译 Go API 镜像的 dockerfile
-├── Dockerfile.ui               # 编译前端 UI 镜像的 dockerfile
-├── Gopkg.lock                  # dep 版本锁定文件，由 dep 生成
-├── Gopkg.toml                  # dep 版本约束文件，用户可编辑
-├── LICENSE
-├── Makefile                    # Makefile文件
-├── mysql.yaml                  # Kubernetes MySQL 部署清单，由 Helm 生成
-├── naftis.yaml                 # Kubernetes API 和 UI 部署清单，由 Helm 生成
-├── README-CN.md
-├── README.md
-└── run                         # 本地快速启动脚本
-```
-
 ## 功能
 
 - 内部集成了一些常用 dashboard
@@ -118,20 +17,6 @@ Naftis 是一个基于 web 的 Istio dashboard，通过任务模板的方式来�
 - 提供查看 Istio 的 Services 和 Pod 的支持
 - 开箱即用，通过 Kubectl 相关指令即可快速部署
 - 支持 Istio 1.0
-
-## 依赖
-
-目前 Naftis 仅支持 Kubernetes，不支持其他容器调度平台。
-
-- Istio > 1.0
-- Kubernetes >= 1.9.0
-- HIUI >= 1.0.0
-
-### HIUI
-
-Naftis 前端 UI 使用由小米前端组开源的 React 组件 HIUI 构建，参考：
-
-https://github.com/XiaoMi/hiui
 
 ## 快速开始
 
@@ -152,8 +37,6 @@ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o j
 ```
 
 ## 详细的部署流程
-
-### Kubernetes 集群内运行
 
 ```bash
 # 下载最新 release 文件和部署清单
@@ -198,60 +81,6 @@ naftis-ui-69f7d75f47-4jzwz     1/1       Running   0          19s
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 
 # 打开浏览器，访问 http://localhost:8080 即可。默认用户名和密码分别为 admin、admin。
-```
-
-### 本地运行
-
-#### 数据移植
-
-```bash
-# 执行 sql 语句
-mysql> source ./tool/naftis.sql;
-
-# 将 in-local.toml 中的数据库的 DSN 替换成本地 MySQL 实例的 DSN。
-```
-
-### 启动 API 服务
-
-- Linux
-
-```bash
-make build && ./bin/naftis-api start -c config/in-local.toml -i=false
-```
-
-或
-
-```bash
-./run
-```
-
-- Mac OS
-
-```bash
-GOOS=darwin GOARCH=amd64 make build && ./bin/naftis-api start -c config/in-local.toml -i=false
-```
-
-或
-
-```bash
-GOOS=darwin GOARCH=amd64 ./run
-```
-
-#### 配置 Nginx 代理
-
-```bash
-cp tool/naftis.conf <your-nginx-conf-directory>/naftis.conf
-# 酌情修改 naftis.conf 文件并 reload nginx
-```
-
-#### 启动前端 Node 代理
-
-```bash
-cd src/ui
-npm install
-npm run dev
-
-# 打开浏览器访问 http://localhost:5200。
 ```
 
 ## 预览
@@ -311,87 +140,9 @@ Dashboard 页面集成了一些常用的图表，比如请求成功率、4XX请�
 Istio 诊断页面可以查看 Istio Service 和 Pod 状态。
 ![查看Istio状态](./tool/img/Naftis-istio.png)
 
-## Docker 镜像
+## 贡献代码
 
-Naftis 的 API 和 UI 镜像已经发布到 Docker Hub 上，见 [api](https://hub.docker.com/r/sevennt/naftis-api/) 和 [ui](https://hub.docker.com/r/sevennt/naftis-ui/)。
-
-## 开发者指南
-
-### 获取源码
-
-```bash
-go get github.com/xiaomi/naftis
-```
-
-### 配置环境变量
-
-将下述环境变量添加到 ~/.profile。我们强烈推荐通过 [autoenv](https://github.com/kennethreitz/autoenv) 来配置环境变量。
-
-```bash
-# Change GOOS and GOARCH with your environment.
-export GOOS="linux"   # or replace with "darwin", etc.
-export GOARCH="amd64" # or replace with "386", etc.
-
-# Change USER with your Docker Hub account for pulling and pushing custom docker container builds.
-export USER="sevennt"
-export HUB="docker.io/$USER"
-```
-
-如果你使用 [autoenv](https://github.com/kennethreitz/autoenv)，则输入 `cd .` 来使环境变量生效。
-
-### Go 依赖
-
-我们目前使用 [dep](https://github.com/golang/dep) 管理依赖。
-
-```bash
-# 安装 dep
-go get -u github.com/golang/dep
-dep ensure -v # 安装 Go 依赖
-```
-
-### 代码风格
-
-- [Go](https://github.com/golang/go/wiki/CodeReviewComments)
-- [React](https://standardjs.com/)
-
-## 其他指令
-
-```bash
-make                # 编译所有 targets
-
-make build          # 编译 Go 二进制文件、前端静态资源、Kubernetes 清单
-make build.api      # 编译 Go 二进制文件
-make build.ui       # 编译前端静态资源
-make build.manifest # 编译 Kubernetes 清单
-
-make fmt  # 格式化 Go 代码
-make lint # lint Go 代码
-make vet  # vet Go 代码
-make test # 运行测试用例
-make tar  # 打包成压缩文件
-
-make docker     # 编译 docker 镜像
-make docker.api # 编译后端 docker 镜像
-make docker.ui  # 编译前端 docker 镜像
-make push       # 把镜像推送到 Docker Hub
-
-./bin/naftis-api -h      # 显示帮助信息
-./bin/naftis-api version # 显示版本信息
-
-helm template install/helm/naftis --name naftis --namespace naftis > naftis.yaml # 本地渲染 Kubernetes 清单
-
-./tool/cleanup.sh # 清理已部署的 Naftis
-```
-
-## 架构
-
-![Naftis-arch](./tool/img/Naftis-arch.png)
-
-## TODO 列表
-
-- [ ] 添加测试用例
-- [ ] 支持 Istio 资源查询
-- [ ] 添加 Grafana, Jaeger, Prometheus 链接入口
+参考 [CONTRIBUTING](./CONTRIBUTING-CN.md) 来获取提交 patch 和 contributing 工作流的详细信息。
 
 ## License
 
