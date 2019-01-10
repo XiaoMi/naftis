@@ -20,7 +20,7 @@ https://github.com/xiaomi/hiui
 
 同时你可以参考[这里](./src/ui/README.md)来获得更详细的信息。
 
-### 设置 kubernetes 开发环境
+### 设置 Kubernetes 开发环境
 
 你可以安装 [Minikube](https://github.com/kubernetes/minikube)，或者使用云服务商提供的 Kubernetes 集群。
 
@@ -246,6 +246,7 @@ make push       # 把镜像推送到 Docker Hub
 helm template install/helm/naftis --name naftis --namespace naftis > naftis.yaml # 本地渲染 Kubernetes 清单
 
 ./tool/cleanup.sh # 清理已部署的 Naftis
+```
 
 ## 架构
 
