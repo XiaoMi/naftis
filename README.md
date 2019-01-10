@@ -8,108 +8,6 @@
 Naftis is a web-based dashboard for Istio. It helps user manage their Istio tasks more easily.
 Using Naftis we can custom our own task templates, then build task from them and execute it.
 
-## Documentation
-
-<!-- TOC -->
-
-- [Naftis](#naftis)
-  - [Dockmentation](#dockmentation)
-  - [Code Structure](#code-structure)
-  - [Features](#features)
-  - [Requirements](#requirements)
-    - [HIUI](#hiui)
-  - [Quick Started](#quick-started)
-  - [Detailed Deployments](#detailed-deployments)
-    - [Running Under Kubernetes Cluster](#running-under-kubernetes-cluster)
-    - [Running Under Local Machine](#running-under-local-machine)
-      - [Migration](#migration)
-      - [Start API Server](#start-api-server)
-      - [Modify Nginx Proxy Config](#modify-nginx-proxy-config)
-      - [Start Node Proxy Server](#start-node-proxy-server)
-  - [Previews](#previews)
-    - [Dashboard](#dashboard)
-    - [Services](#services)
-      - [Service Detail](#service-detail)
-      - [Service Pod](#service-pod)
-    - [Task Templates](#task-templates)
-      - [Task Tpl](#task-tpl)
-      - [Task View](#task-view)
-      - [Task New](#task-new)
-      - [Create Task](#create-task)
-      - [Istio Diagnosis](#istio-diagnosis)
-  - [Docker Images](#docker-images)
-  - [Developer's Guide](#developers-guide)
-    - [Fetch source code](#fetch-source-code)
-    - [Setting environment variables](#setting-environment-variables)
-    - [Go Dependency](#go-dependency)
-    - [Code Style](#code-style)
-  - [Other Directives](#other-directives)
-  - [Architecture](#architecture)
-  - [TODO List](#todo-list)
-  - [License](#license)
-
-<!-- /TOC -->
-
-## Code Structure
-
-```bash
-.
-├── bin                         # directory store binary
-├── config                      # directory store configuration files
-│   ├── in-cluster.toml         # in Kubernetes cluster configuration file
-│   ├── in-local.toml           # in local machine configuration file
-├── install                     # Helm Charts
-│   └── helm
-│       ├── mysql
-│       └── naftis
-├── src                         # source code
-│   ├── api                     # backend server source code
-│   │   ├── bootstrap           # store start arguments
-│   │   ├── executor            # execute tasks from task queue
-│   │   ├── handler             # HTTP handlers
-│   │   ├── log                 # log package wraps zap
-│   │   ├── middleware          # HTTP middlewares
-│   │   ├── model               # common models
-│   │   ├── router              # HTTP routers
-│   │   ├── service             # some wraped services
-│   │   ├── storer              # db storer
-│   │   ├── util                # utilities
-│   │   ├── version             # provides build-in version message
-│   │   ├── worker              # task worker
-│   │   └── main.go             # index of backend server
-│   └── ui                      # frontend source code
-│       ├── build               # webpack scripts
-│       ├── src                 # truly frontend source code
-│       ├── package.json
-│       ├── package-lock.json
-│       ├── postcss.config.js
-│       ├── README-CN.md
-│       └── README.md
-├── tool                        # some shell and migrate scripts
-│   ├── img
-│   ├── apppkg.sh
-│   ├── build.sh
-│   ├── cleanup.sh              # clean up Naftis
-│   ├── conn.sh
-│   ├── genmanifest.sh          # generate manifest for Naftis deployment in Kubernetes
-│   ├── gentmpl.go
-│   ├── naftis.sql              # Naftis migrate sql scripts
-│   ├── naftis.conf             # Naftis Nginx configuration file
-│   └── version.sh
-├── vendor                      # go dependencies
-├── Dockerfile.api              # backend image dockerfile
-├── Dockerfile.ui               # frontend image dockerfile
-├── Gopkg.lock                  # dep depencies version lock file
-├── Gopkg.toml                  # dep depencies version primarily hand-edited file
-├── LICENSE
-├── Makefile                    # project's makefile
-├── mysql.yaml                  # Kubernetes Naftis API and UI manifest, generate by Helm
-├── naftis.yaml                 # Kubernetes Naftis MySQL manifest, generate by Helm
-├── README-CN.md
-├── README.md
-└── run                         # shortcut script for local running
-```
-
 ## Features
 
 - Integrates with some real-time dashboards
@@ -120,19 +18,7 @@ Using Naftis we can custom our own task templates, then build task from them and
 - Out of the box, easy deployment with `kubectl` commands
 - Istio 1.0 supported
 
-## Requirements
-
-- Istio > 1.0
-- Kubernetes >= 1.9.0
-- HIUI >= 1.0.0
-
-### HIUI
-
-Naftis dashboard use powerful HIUI (A React based UI components which released by Xiaomi FE Team) to built responsive UI, more reference:
-
-https://github.com/XiaoMi/hiui
-
-## Quick Started
+## Quick started
 
 ```bash
 # download latest Naftis release files and manifest
@@ -150,9 +36,7 @@ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o j
 # explorer http://localhost:8080/ with your browser, default user name and password is "admin".
 ```
 
-## Detailed Deployments
-
-### Running Under Kubernetes Cluster
+## Detailed deployments
 
 ```bash
 # download latest Naftis files and manifest
@@ -200,60 +84,6 @@ $ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o
 
 Explorer [http://localhost:8080/](http://localhost:8080/) with your browser, default user name and password is "admin".
 
-### Running Under Local Machine
-
-#### Migration
-
-```bash
-# run migrate sql script
-mysql> source ./tool/naftis.sql;
-
-# modify in-local.toml and replace with your own MySQL DSN.
-```
-
-#### Start API Server
-
-- Linux
-
-```bash
-make build && ./bin/naftis-api start -c config/in-local.toml -i=false # building and starting naftis-api
-```
-
-or
-
-```bash
-./run
-```
-
-- Mac OS
-
-```bash
-GOOS=darwin GOARCH=amd64 make build && ./bin/naftis-api start -c config/in-local.toml -i=false # building and starting naftis-api
-```
-
-or
-
-```bash
-GOOS=darwin GOARCH=amd64 ./run
-```
-
-#### Modify Nginx Proxy Config
-
-```bash
-cp tool/naftis.conf <your-nginx-conf-directory>/naftis.conf
-# modify naftis.conf and then reload Nginx
-```
-
-#### Start Node Proxy Server
-
-```bash
-cd src/ui
-npm install
-npm run dev # start node proxy
-
-# Explorer http://localhost:5200/ with your browser.
-```
-
 ## Previews
 
 ### Dashboard
@@ -262,29 +92,29 @@ npm run dev # start node proxy
 
 ### Services
 
-#### Service Detail
+#### Service detail
 
 ![Services-Detail](./tool/img/Naftis-service.png)
 
-#### Service Pod
+#### Service pod
 
 ![Services-Pod](./tool/img/Naftis-service-1.png)
 
-### Task Templates
+### Task templates
 
-#### Task Tpl
+#### Task tpl
 
 ![Task Tpl](./tool/img/Naftis-tasktpl.png)
 
-#### Task View
+#### Task view
 
 ![Task View](./tool/img/Naftis-tasktpl-view.png)
 
-#### Task New
+#### Task new
 
 ![Task New](./tool/img/Naftis-tasktpl-new.png)
 
-#### Create Task
+#### Create task
 
 ![Create Task Step1](./tool/img/Naftis-taskcreate-1.png)
 
@@ -292,89 +122,13 @@ npm run dev # start node proxy
 
 ![Create Task Step3](./tool/img/Naftis-taskcreate-3.png)
 
-#### Istio Diagnosis
+#### Istio diagnosis
 
 ![Istio Diagnosis](./tool/img/Naftis-istio.png)
 
-## Docker Images
+## Contribution
 
-Naftis api and ui image has been published on Docker Hub in [api](https://hub.docker.com/r/sevennt/naftis-api/) and [ui](https://hub.docker.com/r/sevennt/naftis-ui/).
-
-## Developer's Guide
-
-### Fetch source code
-
-```bash
-go get github.com/xiaomi/naftis
-```
-
-### Setting environment variables
-
-Add the follow exports to your ~/.profile. [autoenv](https://github.com/kennethreitz/autoenv) is also strongly recommended.
-
-```bash
-# Change GOOS and GOARCH with your environment.
-export GOOS="linux"   # or replace with "darwin", etc.
-export GOARCH="amd64" # or replace with "386", etc.
-
-# Change USER with your Docker Hub account for pulling and pushing custom docker container builds.
-export USER="sevennt"
-export HUB="docker.io/$USER"
-```
-
-If you choose [autoenv](https://github.com/kennethreitz/autoenv) to export environment variables, type `cd .` to make it work.
-
-### Go Dependency
-
-We use [dep](https://github.com/golang/dep) to manage our go dependencies.
-
-```bash
-# install dep
-go get -u github.com/golang/dep
-dep ensure -v # install dependcies
-```
-
-### Code Style
-
-- [Go](https://github.com/golang/go/wiki/CodeReviewComments)
-- [React](https://standardjs.com/)
-
-## Other Directives
-
-```bash
-make                # make all targets
-
-make build          # build api binaries, frontend assets, and Kubernetes manifest
-make build.api      # build backend binaries
-make build.ui       # build frontend assets
-make build.manifest # build Kubernetes manifest
-
-make fmt  # go fmt codes
-make lint # lint codes
-make vet  # vet codes
-make test # run tests
-make tar  # compress directories
-
-make docker      # build docker images
-make docker.api  # build backend docker images
-make docker.ui   # build frontend docker images
-make push        # push images to docker.io
-
-./bin/naftis-api -h      # show help messages
-./bin/naftis-api version # show binary build version messages
-
-./tool/cleanup.sh # clean up Naftis
-```
-
-## Architecture
-
-![Naftis-arch](./tool/img/Naftis-arch.png)
-
-## TODO List
-
-- [ ] Add testcases
-- [ ] Supporting query Istio resource
-- [ ] Add Links of Grafana, Jaeger, Prometheus
+See [CONTRIBUTING](./CONTRIBUTING.md) for details on submitting patches and the contribution workflow.
 
 ## License
 
