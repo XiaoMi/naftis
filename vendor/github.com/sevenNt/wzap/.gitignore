@@ -1,0 +1,6 @@
+.idea/
+vendor/
+*.swp
+*.log
+*.gz
+example/*.json

@@ -21,9 +21,15 @@ import "mixer/v1/attributes.proto";
 import "mixer/v1/config/client/api_spec.proto";
 import "mixer/v1/config/client/quota.proto";
 
+// $schema: istio.mixer.v1.config.client.HTTPAPISpecBinding
+// $schema: istio.mixer.v1.config.client.HTTPAPISpec
+// $schema: istio.mixer.v1.config.client.QuotaSpecBinding
+// $schema: istio.mixer.v1.config.client.QuotaSpec
 // $title: Mixer Client
-// $description: Configuration state for the Mixer client library
+// $description: Configuration state for the Mixer client library.
+// $location: https://istio.io/docs/reference/config/policy-and-telemetry/istio.mixer.v1.config.client
 
+// Describes the configuration state for the Mixer client library that's built into Envoy.
 package istio.mixer.v1.config.client;
 
 option go_package = "istio.io/api/mixer/v1/config/client";
@@ -31,6 +37,7 @@ option go_package = "istio.io/api/mixer/v1/config/client";
 option (gogoproto.goproto_getters_all) = false;
 option (gogoproto.equal_all) = false;
 option (gogoproto.gostring_all) = false;
+option (gogoproto.stable_marshaler_all) = true;
 
 // Specifies the behavior when the client is unable to connect to Mixer.
 message NetworkFailPolicy {
@@ -46,6 +53,16 @@ message NetworkFailPolicy {
 
   // Specifies the behavior when the client is unable to connect to Mixer.
   FailPolicy policy = 1;
+
+  // Max retries on transport error.
+  uint32 max_retry = 2;
+
+  // Base time to wait between retries.  Will be adjusted by exponential
+  // backoff and jitter.
+  google.protobuf.Duration base_retry_wait = 3;
+
+  // Max time to wait between retries.
+  google.protobuf.Duration max_retry_wait = 4;
 }
 
 // Defines the per-service client configuration.
@@ -79,12 +96,15 @@ message ServiceConfig {
   // In case of a per-route override, per-route attributes take precedence
   // over the attributes supplied in the client configuration.
   //
-  // Forwarded attributes take precedence over the static Mixer attributes.
+  // Forwarded attributes take precedence over the static Mixer attributes,
+  // except in cases where there is clear configuration to ignore forwarded
+  // attributes. Gateways, for instance, should never use forwarded attributes.
+  //
   // The full order of application is as follows:
   // 1. static Mixer attributes from the filter config;
   // 2. static Mixer attributes from the route config;
-  // 3. forwarded attributes from the source filter config (if any);
-  // 4. forwarded attributes from the source route config (if any);
+  // 3. forwarded attributes from the source filter config (if any and not ignored);
+  // 4. forwarded attributes from the source route config (if any and not ignored);
   // 5. derived attributes from the request metadata.
   Attributes forward_attributes = 8;
 }
@@ -104,14 +124,14 @@ message TransportConfig {
   // This is the mesh level policy. The default value for policy is FAIL_OPEN.
   NetworkFailPolicy network_fail_policy = 4;
 
-  // Specify refresh interval to write mixer client statistics to Envoy share
+  // Specify refresh interval to write Mixer client statistics to Envoy share
   // memory. If not specified, the interval is 10 seconds.
   google.protobuf.Duration stats_update_interval = 5;
 
   // Name of the cluster that will forward check calls to a pool of mixer
   // servers. Defaults to "mixer_server". By using different names for
   // checkCluster and reportCluster, it is possible to have one set of
-  // mixer servers handle check calls, while another set of mixer servers
+  // Mixer servers handle check calls, while another set of Mixer servers
   // handle report calls.
   //
   // NOTE: Any value other than the default "mixer_server" will require the
@@ -121,17 +141,29 @@ message TransportConfig {
   // Name of the cluster that will forward report calls to a pool of mixer
   // servers. Defaults to "mixer_server". By using different names for
   // checkCluster and reportCluster, it is possible to have one set of
-  // mixer servers handle check calls, while another set of mixer servers
+  // Mixer servers handle check calls, while another set of Mixer servers
   // handle report calls.
   //
   // NOTE: Any value other than the default "mixer_server" will require the
   // Istio Grafana dashboards to be reconfigured to use the new name.
   string report_cluster = 7;
 
-  // Default attributes to forward to mixer upstream. This typically
+  // Default attributes to forward to Mixer upstream. This typically
   // includes the "source.ip" and "source.uid" attributes. These
   // attributes are consumed by the proxy in front of mixer.
   Attributes attributes_for_mixer_proxy = 8;
+
+  // When disable_report_batch is false, this value specifies the maximum number
+  // of requests that are batched in report. If left unspecified, the default value
+  // of report_batch_max_entries == 0 will use the hardcoded defaults of
+  // istio::mixerclient::ReportOptions.
+  uint32 report_batch_max_entries = 9;
+
+  // When disable_report_batch is false, this value specifies the maximum elapsed
+  // time a batched report will be sent after a user request is processed. If left
+  // unspecified, the default report_batch_max_time == 0 will use the hardcoded
+  // defaults of istio::mixerclient::ReportOptions.
+  google.protobuf.Duration report_batch_max_time = 10;
 }
 
 // Defines the client config for HTTP.
@@ -156,6 +188,12 @@ message HttpClientConfig {
   // Default attributes to forward to upstream. This typically
   // includes the "source.ip" and "source.uid" attributes.
   Attributes forward_attributes = 5;
+
+  // Whether or not to use attributes forwarded in the request headers to 
+  // create the attribute bag to send to mixer. For intra-mesh traffic,
+  // this should be set to "false". For ingress/egress gateways, this
+  // should be set to "true".
+  bool ignore_forwarded_attributes = 6;
 }
 
 // Defines the client config for TCP.
@@ -168,10 +206,10 @@ message TcpClientConfig {
   // "destination.uid" attributes.
   Attributes mixer_attributes = 2;
 
-  // If set to true, disables mixer check calls.
+  // If set to true, disables Mixer check calls.
   bool disable_check_calls = 3;
 
-  // If set to true, disables mixer check calls.
+  // If set to true, disables Mixer check calls.
   bool disable_report_calls = 4;
 
   // Quota specifications to generate quota requirements.

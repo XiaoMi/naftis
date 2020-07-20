@@ -15,19 +15,32 @@
 package kube
 
 import (
+	"fmt"
 	"os"
 
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/metadata"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
-// BuildClientConfig is a helper function that builds client config from a kubeconfig filepath.
+// BuildClientConfig builds a client rest config from a kubeconfig filepath and context.
 // It overrides the current context with the one provided (empty to use default).
 //
 // This is a modified version of k8s.io/client-go/tools/clientcmd/BuildConfigFromFlags with the
 // difference that it loads default configs if not running in-cluster.
 func BuildClientConfig(kubeconfig, context string) (*rest.Config, error) {
+	return BuildClientCmd(kubeconfig, context).ClientConfig()
+}
+
+// BuildClientCmd builds a client cmd config from a kubeconfig filepath and context.
+// It overrides the current context with the one provided (empty to use default).
+//
+// This is a modified version of k8s.io/client-go/tools/clientcmd/BuildConfigFromFlags with the
+// difference that it loads default configs if not running in-cluster.
+func BuildClientCmd(kubeconfig, context string) clientcmd.ClientConfig {
 	if kubeconfig != "" {
 		info, err := os.Stat(kubeconfig)
 		if err != nil || info.Size() == 0 {
@@ -50,15 +63,67 @@ func BuildClientConfig(kubeconfig, context string) (*rest.Config, error) {
 		CurrentContext:  context,
 	}
 
-	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides).ClientConfig()
+	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
 }
 
 // CreateClientset is a helper function that builds a kubernetes Clienset from a kubeconfig
 // filepath. See `BuildClientConfig` for kubeconfig loading rules.
-func CreateClientset(kubeconfig, context string) (*kubernetes.Clientset, error) {
+func CreateClientset(kubeconfig, context string, fns ...func(*rest.Config)) (*kubernetes.Clientset, error) {
+	c, err := BuildClientConfig(kubeconfig, context)
+	if err != nil {
+		return nil, fmt.Errorf("build client config: %v", err)
+	}
+	for _, fn := range fns {
+		fn(c)
+	}
+	return kubernetes.NewForConfig(c)
+}
+
+// CreateMetadataClient is a helper function that builds a kubernetes metadata client from a kubeconfig
+// filepath. See `BuildClientConfig` for kubeconfig loading rules.
+func CreateMetadataClient(kubeconfig, context string, fns ...func(*rest.Config)) (metadata.Interface, error) {
 	c, err := BuildClientConfig(kubeconfig, context)
 	if err != nil {
 		return nil, err
 	}
-	return kubernetes.NewForConfig(c)
+	for _, fn := range fns {
+		fn(c)
+	}
+	return metadata.NewForConfig(c)
+}
+
+// CreateInterfaceFromClusterConfig is a helper function to create Kubernetes interface from in memory cluster config struct
+func CreateInterfaceFromClusterConfig(clusterConfig *clientcmdapi.Config) (kubernetes.Interface, error) {
+	return createInterface(clusterConfig)
+}
+
+// createInterface is new function which creates rest config and kubernetes interface
+// from passed cluster's config struct
+func createInterface(clusterConfig *clientcmdapi.Config) (kubernetes.Interface, error) {
+	clientConfig := clientcmd.NewDefaultClientConfig(*clusterConfig, &clientcmd.ConfigOverrides{})
+	restConfig, err := clientConfig.ClientConfig()
+	if err != nil {
+		return nil, err
+	}
+	return kubernetes.NewForConfig(restConfig)
+}
+
+// CreateMetadataInterfaceFromClusterConfig is a helper function to create Kubernetes metadata interface from in memory cluster config struct
+func CreateMetadataInterfaceFromClusterConfig(clusterConfig *clientcmdapi.Config) (metadata.Interface, error) {
+	clientConfig := clientcmd.NewDefaultClientConfig(*clusterConfig, &clientcmd.ConfigOverrides{})
+	restConfig, err := clientConfig.ClientConfig()
+	if err != nil {
+		return nil, err
+	}
+	return metadata.NewForConfig(restConfig)
+}
+
+// CreateDynamicInterfaceFromClusterConfig is a helper function to create Kubernetes dynamic interface from in memory cluster config struct
+func CreateDynamicInterfaceFromClusterConfig(clusterConfig *clientcmdapi.Config) (dynamic.Interface, error) {
+	clientConfig := clientcmd.NewDefaultClientConfig(*clusterConfig, &clientcmd.ConfigOverrides{})
+	restConfig, err := clientConfig.ClientConfig()
+	if err != nil {
+		return nil, err
+	}
+	return dynamic.NewForConfig(restConfig)
 }

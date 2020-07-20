@@ -27,6 +27,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/hashicorp/go-multierror"
 	"istio.io/istio/pilot/pkg/config/kube/crd"
+	"istio.io/istio/pilot/pkg/config/kube/crd/controller"
 	istiomodel "istio.io/istio/pilot/pkg/model"
 )
 
@@ -36,12 +37,13 @@ var (
 )
 
 type istiocrdExecutor struct {
-	client *crd.Client
+	client *controller.Client
+
 }
 
 // NewCrdExecutor returns a istiocrd executor.
 func NewCrdExecutor() Executor {
-	c, e := crd.NewClient(util.Kubeconfig(), "", istiomodel.IstioConfigTypes, "")
+	c, e := controller.NewClient(util.Kubeconfig(), "", crd.SupportedSchemas, "" , nil, "" )
 	if e != nil {
 		log.Panic("[executor] init istiocrd fail", "error", e)
 	}
@@ -105,8 +107,8 @@ func (i *istiocrdExecutor) replace(varr []istiomodel.Config, task *Task) (errs e
 
 		// fill up revision
 		if config.ResourceVersion == "" {
-			current, exists := i.client.Get(config.Type, config.Name, config.Namespace)
-			if !exists {
+			current := i.client.Get(config.GroupVersionKind(), config.Name, config.Namespace)
+			if current == nil {
 				log.Error("Task not exists", "type", config.Type, "name", config.Name, "namespace", task.Namespace)
 				return ErrTaskNotExists
 			}
@@ -134,7 +136,7 @@ func (i *istiocrdExecutor) delete(varr []istiomodel.Config, task *Task) (errs er
 			return err
 		}
 
-		if err := i.client.Delete(config.Type, config.Name, config.Namespace); err != nil {
+		if err := i.client.Delete(config.GroupVersionKind(), config.Name, config.Namespace); err != nil {
 			log.Info("Delete config fail", "key", config.Key(), "config", config, "error", err)
 			// if the config delete fail, continue loop
 			errs = multierror.Append(errs, fmt.Errorf("cannot delete %s: %v", config.Key(), err))
@@ -224,13 +226,13 @@ func (i *istiocrdExecutor) apply(task Task, t taskDbHandler) (errs error) {
 
 func (i *istiocrdExecutor) yamlOutput(configList []istiomodel.Config) string {
 	buf := bytes.NewBuffer([]byte{})
-	descriptor := i.client.ConfigDescriptor()
 	for _, config := range configList {
-		schema, exists := descriptor.GetByType(config.Type)
-		if !exists {
-			fmt.Printf("Unknown kind %q for %v", crd.ResourceName(config.Type), config.Name)
+		schema := i.client.Schemas().MustFindByGroupVersionKind(config.GroupVersionKind())
+		if schema == nil  {
+			fmt.Printf("Unknown kind %+v for %v", config.GroupVersionKind(), config.Name)
 			continue
 		}
+
 		obj, err := crd.ConvertConfig(schema, config)
 		if err != nil {
 			fmt.Printf("Could not decode %v: %v", config.Name, err)
@@ -248,3 +250,4 @@ func (i *istiocrdExecutor) yamlOutput(configList []istiomodel.Config) string {
 
 	return buf.String()
 }
+

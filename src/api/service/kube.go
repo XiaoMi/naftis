@@ -28,6 +28,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	"context"
 )
 
 var (
@@ -247,7 +248,7 @@ func (k *kubeInfo) podsFromK8S(labels map[string]string) pods {
 		ls = ls[1:]
 	}
 
-	p, err := client.CoreV1().Pods(k.namespace).List(metav1.ListOptions{
+	p, err := client.CoreV1().Pods(k.namespace).List(context.TODO(), metav1.ListOptions{
 		LabelSelector: ls,
 	})
 	if err != nil {
@@ -335,14 +336,14 @@ func (k *kubeInfo) Tree() []Tree {
 func (k *kubeInfo) sync() {
 	for {
 		log.Debug("[Kube] sync start", "svcs", len(k.services), "namespace", k.namespace, "time", time.Now())
-		svcs, err := client.CoreV1().Services(k.namespace).List(metav1.ListOptions{
+		svcs, err := client.CoreV1().Services(k.namespace).List(context.TODO(), metav1.ListOptions{
 			LabelSelector: "provider!=kubernetes",
 		})
 		if err != nil {
 			// panic(err.Error())
 			log.Error("[k8s] get services err", "err", err)
 		}
-		ns, err := client.CoreV1().Namespaces().List(metav1.ListOptions{
+		ns, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{
 			LabelSelector: "provider!=kubernetes",
 		})
 		if err != nil {

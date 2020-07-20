@@ -15,14 +15,15 @@
 package kube
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 
-	"istio.io/istio/pkg/log"
+	"istio.io/pkg/log"
 )
 
 var (
@@ -118,8 +119,8 @@ func addLabelsAndAnnotations(obj *meta_v1.ObjectMeta, labels []string, annotatio
 // optional labels.
 func RegisterEndpoint(client kubernetes.Interface, namespace string, svcName string,
 	ip string, portsList []NamedPort, labels []string, annotations []string) error {
-	getOpt := meta_v1.GetOptions{IncludeUninitialized: true}
-	_, err := client.CoreV1().Services(namespace).Get(svcName, getOpt)
+	getOpt := meta_v1.GetOptions{}
+	_, err := client.CoreV1().Services(namespace).Get(context.TODO(), svcName, getOpt)
 	if err != nil {
 		log.Warnf("Got '%v' looking up svc '%s' in namespace '%s', attempting to create it", err, svcName, namespace)
 		svc := v1.Service{}
@@ -128,20 +129,20 @@ func RegisterEndpoint(client kubernetes.Interface, namespace string, svcName str
 			svc.Spec.Ports = append(svc.Spec.Ports, v1.ServicePort{Name: p.Name, Port: p.Port})
 		}
 		addLabelsAndAnnotations(&svc.ObjectMeta, labels, annotations)
-		_, err = client.CoreV1().Services(namespace).Create(&svc)
+		_, err = client.CoreV1().Services(namespace).Create(context.TODO(), &svc, meta_v1.CreateOptions{})
 		if err != nil {
 			log.Errora("Unable to create service: ", err)
 			return err
 		}
 	}
-	eps, err := client.CoreV1().Endpoints(namespace).Get(svcName, getOpt)
+	eps, err := client.CoreV1().Endpoints(namespace).Get(context.TODO(), svcName, getOpt)
 	if err != nil {
 		log.Warnf("Got '%v' looking up endpoints for '%s' in namespace '%s', attempting to create them",
 			err, svcName, namespace)
 		endP := v1.Endpoints{}
 		endP.Name = svcName // same but does it need to be
 		addLabelsAndAnnotations(&endP.ObjectMeta, labels, annotations)
-		eps, err = client.CoreV1().Endpoints(namespace).Create(&endP)
+		eps, err = client.CoreV1().Endpoints(namespace).Create(context.TODO(), &endP, meta_v1.CreateOptions{})
 		if err != nil {
 			log.Errora("Unable to create endpoint: ", err)
 			return err
@@ -180,7 +181,7 @@ func RegisterEndpoint(client kubernetes.Interface, namespace string, svcName str
 		eps.Subsets = append(eps.Subsets, newSubSet)
 		log.Infof("No pre existing exact matching ports list found, created new subset %v", newSubSet)
 	}
-	eps, err = client.CoreV1().Endpoints(namespace).Update(eps)
+	eps, err = client.CoreV1().Endpoints(namespace).Update(context.TODO(), eps, meta_v1.UpdateOptions{})
 	if err != nil {
 		log.Errora("Update failed with: ", err)
 		return err
