@@ -68,7 +68,8 @@ func InitProm() {
 
 // Query queries prometheus Value with specific query string.
 func (p *prom) Query(q string) (model.Value, error) {
-	return p.api.Query(context.Background(), q, time.Now())
+	val, _, err := p.api.Query(context.Background(), q, time.Now())
+	return val, err
 }
 
 // Graph represents a service graph generated.
@@ -319,7 +320,7 @@ func merge(g1, g2 *Dynamic) (*Dynamic, error) {
 }
 
 func extractGraph(api v1.API, query, label string) (*Dynamic, error) {
-	val, err := api.Query(context.Background(), query, time.Now())
+	val, _, err := api.Query(context.Background(), query, time.Now())
 	if err != nil {
 		return nil, err
 	}

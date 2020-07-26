@@ -1,4 +1,4 @@
-// Copyright 2018 Istio Authors
+// Copyright 2019 Istio Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,86 +15,300 @@
 package model
 
 import (
-	"fmt"
-	"net/url"
-	"strconv"
+	"strings"
+	"time"
 
-	authn "istio.io/api/authentication/v1alpha1"
-	meshconfig "istio.io/api/mesh/v1alpha1"
+	"istio.io/api/security/v1beta1"
+
+	"istio.io/istio/pkg/config/labels"
+	"istio.io/istio/pkg/config/schema/collections"
 )
 
-// JwtKeyResolver resolves JWT public key and JwksURI.
-var JwtKeyResolver = newJwksResolver(JwtPubKeyExpireDuration, JwtPubKeyEvictionDuration, JwtPubKeyRefreshInterval)
+// MutualTLSMode is the mutule TLS mode specified by authentication policy.
+type MutualTLSMode int
 
-// GetConsolidateAuthenticationPolicy returns the authentication policy for
-// service specified by hostname and port, if defined.
-// If not, it generates and output a policy that is equivalent to the legacy flag
-// and/or service annotation. Once these legacy flags/config deprecated,
-// this function can be placed by a call to store.AuthenticationPolicyByDestination
-// directly.
-func GetConsolidateAuthenticationPolicy(mesh *meshconfig.MeshConfig, store IstioConfigStore, hostname Hostname, port *Port) *authn.Policy {
-	config := store.AuthenticationPolicyByDestination(hostname, port)
-	if config != nil {
-		policy := config.Spec.(*authn.Policy)
-		if err := JwtKeyResolver.SetAuthenticationPolicyJwksURIs(policy); err == nil {
-			return policy
-		}
-	}
+const (
+	// MTLSUnknown is used to indicate the variable hasn't been initialized correctly (with the authentication policy).
+	MTLSUnknown MutualTLSMode = iota
 
-	log.Debugf("No authentication policy found for  %s:%d. Fallback to legacy authentication mode %v\n",
-		hostname, port.Port, mesh.AuthPolicy)
-	return legacyAuthenticationPolicyToPolicy(mesh.AuthPolicy)
-}
+	// MTLSDisable if authentication policy disable mTLS.
+	MTLSDisable
 
-// If input legacy is MeshConfig_MUTUAL_TLS, return a authentication policy equivalent to it. Else,
-// returns nil (implies no authentication is used)
-func legacyAuthenticationPolicyToPolicy(legacy meshconfig.MeshConfig_AuthPolicy) *authn.Policy {
-	if legacy == meshconfig.MeshConfig_MUTUAL_TLS {
-		return &authn.Policy{
-			Peers: []*authn.PeerAuthenticationMethod{{
-				Params: &authn.PeerAuthenticationMethod_Mtls{
-					&authn.MutualTls{},
-				}}},
-		}
-	}
-	return nil
-}
+	// MTLSPermissive if authentication policy enable mTLS in permissive mode.
+	MTLSPermissive
 
-// ParseJwksURI parses the input URI and returns the corresponding hostname, port, and whether SSL is used.
-// URI must start with "http://" or "https://", which corresponding to "http" or "https" scheme.
-// Port number is extracted from URI if available (i.e from postfix :<port>, eg. ":80"), or assigned
-// to a default value based on URI scheme (80 for http and 443 for https).
-// Port name is set to URI scheme value.
-// Note: this is to replace [buildJWKSURIClusterNameAndAddress]
-// (https://github.com/istio/istio/blob/master/pilot/pkg/proxy/envoy/v1/mixer.go#L401),
-// which is used for the old EUC policy.
-func ParseJwksURI(jwksURI string) (string, *Port, bool, error) {
-	u, err := url.Parse(jwksURI)
-	if err != nil {
-		return "", nil, false, err
-	}
-	var useSSL bool
-	var portNumber int
-	switch u.Scheme {
-	case "http":
-		useSSL = false
-		portNumber = 80
-	case "https":
-		useSSL = true
-		portNumber = 443
+	// MTLSStrict if authentication policy enable mTLS in strict mode.
+	MTLSStrict
+)
+
+const (
+	ResourceSeparator = "~"
+)
+
+// String converts MutualTLSMode to human readable string for debugging.
+func (mode MutualTLSMode) String() string {
+	switch mode {
+	case MTLSDisable:
+		return "DISABLE"
+	case MTLSPermissive:
+		return "PERMISSIVE"
+	case MTLSStrict:
+		return "STRICT"
 	default:
-		return "", nil, false, fmt.Errorf("URI scheme %q is not supported", u.Scheme)
+		return "UNKNOWN"
+	}
+}
+
+// AuthenticationPolicies organizes authentication (mTLS + JWT) policies by namespace.
+type AuthenticationPolicies struct {
+	// Maps from namespace to the v1beta1 authentication policies.
+	requestAuthentications map[string][]Config
+
+	peerAuthentications map[string][]Config
+
+	// namespaceMutualTLSMode is the MutualTLSMode correspoinding to the namespace-level PeerAuthentication.
+	// All namespace-level policies, and only them, are added to this map. If the policy mTLS mode is set
+	// to UNSET, it will be resolved to the value set by mesh policy if exist (i.e not UNKNOWN), or MTLSPermissive
+	// otherwise.
+	namespaceMutualTLSMode map[string]MutualTLSMode
+
+	// globalMutualTLSMode is the MutualTLSMode corresponding to the mesh-level PeerAuthentication.
+	// This value can be MTLSUnknown, if there is no mesh-level policy.
+	globalMutualTLSMode MutualTLSMode
+
+	rootNamespace string
+}
+
+// initAuthenticationPolicies creates a new AuthenticationPolicies struct and populates with the
+// authentication policies in the mesh environment.
+func initAuthenticationPolicies(env *Environment) (*AuthenticationPolicies, error) {
+	policy := &AuthenticationPolicies{
+		requestAuthentications: map[string][]Config{},
+		peerAuthentications:    map[string][]Config{},
+		globalMutualTLSMode:    MTLSUnknown,
+		rootNamespace:          env.Mesh().GetRootNamespace(),
 	}
 
-	if u.Port() != "" {
-		portNumber, err = strconv.Atoi(u.Port())
-		if err != nil {
-			return "", nil, useSSL, err
+	if configs, err := env.List(
+		collections.IstioSecurityV1Beta1Requestauthentications.Resource().GroupVersionKind(), NamespaceAll); err == nil {
+		sortConfigByCreationTime(configs)
+		policy.addRequestAuthentication(configs)
+	} else {
+		return nil, err
+	}
+
+	if configs, err := env.List(
+		collections.IstioSecurityV1Beta1Peerauthentications.Resource().GroupVersionKind(), NamespaceAll); err == nil {
+		policy.addPeerAuthentication(configs)
+	} else {
+		return nil, err
+	}
+
+	return policy, nil
+}
+
+func (policy *AuthenticationPolicies) addRequestAuthentication(configs []Config) {
+	for _, config := range configs {
+		reqPolicy := config.Spec.(*v1beta1.RequestAuthentication)
+		// Follow OIDC discovery to resolve JwksURI if need to.
+		JwtKeyResolver.ResolveJwksURI(reqPolicy)
+		policy.requestAuthentications[config.Namespace] =
+			append(policy.requestAuthentications[config.Namespace], config)
+	}
+}
+
+// TODO(diemtvu): refactor this function to share with policy-applier pkg.
+func apiModeToMutualTLSMode(mode v1beta1.PeerAuthentication_MutualTLS_Mode) MutualTLSMode {
+	switch mode {
+	case v1beta1.PeerAuthentication_MutualTLS_DISABLE:
+		return MTLSDisable
+	case v1beta1.PeerAuthentication_MutualTLS_PERMISSIVE:
+		return MTLSPermissive
+	case v1beta1.PeerAuthentication_MutualTLS_STRICT:
+		return MTLSStrict
+	default:
+		return MTLSUnknown
+	}
+}
+
+func (policy *AuthenticationPolicies) addPeerAuthentication(configs []Config) {
+	// Sort configs in ascending order by their creation time.
+	sortConfigByCreationTime(configs)
+
+	foundNamespaceMTLS := make(map[string]v1beta1.PeerAuthentication_MutualTLS_Mode)
+	// Track which namespace/mesh level policy seen so far to make sure the oldest one is used.
+	seenNamespaceOrMeshConfig := make(map[string]time.Time)
+
+	for _, config := range configs {
+		// Mesh & namespace level policy are those that have empty selector.
+		spec := config.Spec.(*v1beta1.PeerAuthentication)
+		if spec.Selector == nil || len(spec.Selector.MatchLabels) == 0 {
+			if t, ok := seenNamespaceOrMeshConfig[config.Namespace]; ok {
+				log.Warnf(
+					"Namespace/mesh-level PeerAuthentication is already defined for %q at time %v. Ignore %q which was created at time %v",
+					config.Namespace, t, config.Name, config.CreationTimestamp)
+				continue
+			}
+			seenNamespaceOrMeshConfig[config.Namespace] = config.CreationTimestamp
+
+			mode := v1beta1.PeerAuthentication_MutualTLS_UNSET
+			if spec.Mtls != nil {
+				mode = spec.Mtls.Mode
+			}
+			if config.Namespace == policy.rootNamespace {
+				// This is mesh-level policy. UNSET is treated as permissive for mesh-policy.
+				if mode == v1beta1.PeerAuthentication_MutualTLS_UNSET {
+					policy.globalMutualTLSMode = MTLSPermissive
+				} else {
+					policy.globalMutualTLSMode = apiModeToMutualTLSMode(mode)
+				}
+			} else {
+				// For regular namespace, just add to the intemediate map.
+				foundNamespaceMTLS[config.Namespace] = mode
+			}
+		}
+
+		// Add the config to the map by namespace for future look up. This is done after namespace/mesh
+		// singleton check so there should be at most one namespace/mesh config is added to the map.
+		policy.peerAuthentications[config.Namespace] =
+			append(policy.peerAuthentications[config.Namespace], config)
+	}
+
+	// Process found namespace-level policy.
+	policy.namespaceMutualTLSMode = make(map[string]MutualTLSMode, len(foundNamespaceMTLS))
+
+	inheritedMTLSMode := policy.globalMutualTLSMode
+	if inheritedMTLSMode == MTLSUnknown {
+		// If the mesh policy is not explicitly presented, use default valude MTLSPermissive.
+		inheritedMTLSMode = MTLSPermissive
+	}
+	for ns, mtlsMode := range foundNamespaceMTLS {
+		if mtlsMode == v1beta1.PeerAuthentication_MutualTLS_UNSET {
+			policy.namespaceMutualTLSMode[ns] = inheritedMTLSMode
+		} else {
+			policy.namespaceMutualTLSMode[ns] = apiModeToMutualTLSMode(mtlsMode)
+		}
+	}
+}
+
+// GetNamespaceMutualTLSMode returns the MutualTLSMode as defined by a namespace or mesh level
+// PeerAuthentication. The return value could be `MTLSUnknown` if there is no mesh nor namespace
+// PeerAuthentication policy for the given namespace.
+func (policy *AuthenticationPolicies) GetNamespaceMutualTLSMode(namespace string) MutualTLSMode {
+	if mode, ok := policy.namespaceMutualTLSMode[namespace]; ok {
+		return mode
+	}
+	return policy.globalMutualTLSMode
+}
+
+// GetJwtPoliciesForWorkload returns a list of JWT policies matching to labels.
+func (policy *AuthenticationPolicies) GetJwtPoliciesForWorkload(namespace string,
+	workloadLabels labels.Collection) []*Config {
+	return getConfigsForWorkload(policy.requestAuthentications, policy.rootNamespace, namespace, workloadLabels)
+}
+
+// GetPeerAuthenticationsForWorkload returns a list of peer authentication policies matching to labels.
+func (policy *AuthenticationPolicies) GetPeerAuthenticationsForWorkload(namespace string,
+	workloadLabels labels.Collection) []*Config {
+	return getConfigsForWorkload(policy.peerAuthentications, policy.rootNamespace, namespace, workloadLabels)
+}
+
+// GetRootNamespace return root namespace that is tracked by the policy object.
+func (policy *AuthenticationPolicies) GetRootNamespace() string {
+	return policy.rootNamespace
+}
+
+func getConfigsForWorkload(configsByNamespace map[string][]Config,
+	rootNamespace string,
+	namespace string,
+	workloadLabels labels.Collection) []*Config {
+	configs := make([]*Config, 0)
+	lookupInNamespaces := []string{namespace}
+	if namespace != rootNamespace {
+		// Only check the root namespace if the (workload) namespace is not already the root namespace
+		// to avoid double inclusion.
+		lookupInNamespaces = append(lookupInNamespaces, rootNamespace)
+	}
+	for _, ns := range lookupInNamespaces {
+		if nsConfig, ok := configsByNamespace[ns]; ok {
+			for idx := range nsConfig {
+				cfg := &nsConfig[idx]
+				if ns != cfg.Namespace {
+					// Should never come here. Log warning just in case.
+					log.Warnf("Seeing config %s with namespace %s in map entry for %s. Ignored", cfg.Name, cfg.Namespace, ns)
+					continue
+				}
+				var selector labels.Instance
+				switch cfg.Type {
+				case collections.IstioSecurityV1Beta1Requestauthentications.Resource().Kind():
+					selector = labels.Instance(cfg.Spec.(*v1beta1.RequestAuthentication).GetSelector().GetMatchLabels())
+				case collections.IstioSecurityV1Beta1Peerauthentications.Resource().Kind():
+					selector = labels.Instance(cfg.Spec.(*v1beta1.PeerAuthentication).GetSelector().GetMatchLabels())
+				default:
+					log.Warnf("Not support authentication type %q", cfg.Type)
+					continue
+				}
+				if workloadLabels.IsSupersetOf(selector) {
+					configs = append(configs, cfg)
+				}
+			}
 		}
 	}
 
-	return u.Hostname(), &Port{
-		Name: u.Scheme,
-		Port: portNumber,
-	}, useSSL, nil
+	return configs
+}
+
+// SdsCertificateConfig holds TLS certs needed to build SDS TLS context.
+type SdsCertificateConfig struct {
+	CertificatePath   string
+	PrivateKeyPath    string
+	CaCertificatePath string
+}
+
+// GetResourceName converts a SdsCertificateConfig to a string to be used as an SDS resource name
+func (s SdsCertificateConfig) GetResourceName() string {
+	if s.IsKeyCertificate() {
+		return "file-cert:" + s.CertificatePath + ResourceSeparator + s.PrivateKeyPath // Format: file-cert:%s~%s
+	}
+	return ""
+}
+
+// GetRootResourceName converts a SdsCertificateConfig to a string to be used as an SDS resource name for the root
+func (s SdsCertificateConfig) GetRootResourceName() string {
+	if s.IsRootCertificate() {
+		return "file-root:" + s.CaCertificatePath // Format: file-root:%s
+	}
+	return ""
+}
+
+// IsRootCertificate returns true if this config represents a root certificate config.
+func (s SdsCertificateConfig) IsRootCertificate() bool {
+	return s.CaCertificatePath != ""
+}
+
+// IsKeyCertificate returns true if this config represents key certificate config.
+func (s SdsCertificateConfig) IsKeyCertificate() bool {
+	return s.CertificatePath != "" && s.PrivateKeyPath != ""
+}
+
+// SdsCertificateConfigFromResourceName converts the provided resource name into a SdsCertificateConfig
+// If the resource name is not valid, false is returned.
+func SdsCertificateConfigFromResourceName(resource string) (SdsCertificateConfig, bool) {
+	if strings.HasPrefix(resource, "file-cert:") {
+		filesString := strings.TrimPrefix(resource, "file-cert:")
+		split := strings.Split(filesString, ResourceSeparator)
+		if len(split) != 2 {
+			return SdsCertificateConfig{}, false
+		}
+		return SdsCertificateConfig{split[0], split[1], ""}, true
+	} else if strings.HasPrefix(resource, "file-root:") {
+		filesString := strings.TrimPrefix(resource, "file-root:")
+		split := strings.Split(filesString, ResourceSeparator)
+		if len(split) != 1 {
+			return SdsCertificateConfig{}, false
+		}
+		return SdsCertificateConfig{"", "", split[0]}, true
+	} else {
+		return SdsCertificateConfig{}, false
+	}
 }
