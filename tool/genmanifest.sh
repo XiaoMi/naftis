@@ -15,7 +15,7 @@ TAG=`$ROOT/tool/tag.sh`
 
 if ! [ -x "$(command -v helm)" ]; then
   echo 'Error: helm is not installed.'
-  wget https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz -O /tmp/helm.tar.gz
+  wget https://get.helm.sh/helm-v2.11.0-linux-amd64.tar.gz -O /tmp/helm.tar.gz
   tar -xvf /tmp/helm.tar.gz
   export PATH=$PATH:$PWD/linux-amd64/
 fi
