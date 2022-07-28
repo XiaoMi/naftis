@@ -14,7 +14,7 @@ Naftis-api is written in the Go programming language. To build, you'll need a Go
 
 ### Setting up HIUI
 
-Naftis dashboard use powerful [HIUI](https://xiaomi.github.io/hiui/#/en-US) (A React based UI components which released by Xiaomi FE Team) to built responsive UI, more reference:
+Naftis dashboard uses [HIUI](https://xiaomi.github.io/hiui/#/en-US) (a React based UI component released by Xiaomi FE Team) to build the responsive UI. For more information:
 
 https://github.com/xiaomi/hiui
 
@@ -92,7 +92,7 @@ cd src/ui
 npm install
 npm run dev # start node proxy
 
-# Explorer http://localhost:5200/ with your browser.
+# Explore http://localhost:5200/ with your browser.
 ```
 
 ## Git workflow
