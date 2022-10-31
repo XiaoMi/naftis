@@ -5,20 +5,20 @@
 
 [English](https://github.com/xiaomi/naftis/blob/master/README.md) | [中文](https://github.com/xiaomi/naftis/blob/master/README-CN.md)
 
-Naftis is a web-based dashboard for Istio. It helps user manage their Istio tasks more easily.
-Using Naftis we can custom our own task templates, then build task from them and execute it.
+Naftis is a web-based dashboard for Istio that helps users manage their Istio tasks more easily.
+Using Naftis, we can customize our own task templates, build tasks from them, then execute them.
 
 ## Features
 
 - Integrates with some real-time dashboards
 - Customizable task template
-- Support Rollback specific task
-- Optimized Istio service graph with supporting of specifying particular root service node
-- With diagnose data of Istio services and pods
+- Supports Rollback specific tasks
+- Optimized Istio service graph with support for specifying particular root service nodes
+- Diagnose data of Istio services and pods
 - Out of the box, easy deployment with `kubectl` commands
 - Istio 1.0 supported
 
-## Quick started
+## Quick start
 
 ```bash
 # download latest Naftis release files and manifest
@@ -33,7 +33,7 @@ kubectl create namespace naftis && kubectl apply -n naftis -f mysql-cloud.yaml &
 # port forward Naftis
 kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 
-# explorer http://localhost:8080/ with your browser, default user name and password is "admin".
+# explore http://localhost:8080/ with your browser - default user name and password is "admin".
 ```
 
 ## Detailed deployments
@@ -82,7 +82,7 @@ naftis-ui-69f7d75f47-4jzwz     1/1       Running   0          19s
 $ kubectl -n naftis port-forward $(kubectl -n naftis get pod -l app=naftis-ui -o jsonpath='{.items[0].metadata.name}') 8080:80 &
 ```
 
-Explorer [http://localhost:8080/](http://localhost:8080/) with your browser, default user name and password is "admin".
+Explore [http://localhost:8080/](http://localhost:8080/) with your browser - default user name and password is "admin".
 
 ## Previews
 
