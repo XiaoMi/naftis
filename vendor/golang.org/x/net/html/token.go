@@ -110,9 +110,9 @@ func (t Token) String() string {
 	case SelfClosingTagToken:
 		return "<" + t.tagString() + "/>"
 	case CommentToken:
-		return "<!--" + t.Data + "-->"
+		return "<!--" + EscapeString(t.Data) + "-->"
 	case DoctypeToken:
-		return "<!DOCTYPE " + t.Data + ">"
+		return "<!DOCTYPE " + EscapeString(t.Data) + ">"
 	}
 	return "Invalid(" + strconv.Itoa(int(t.Type)) + ")"
 }
@@ -296,8 +296,7 @@ func (z *Tokenizer) Buffered() []byte {
 // too many times in succession.
 func readAtLeastOneByte(r io.Reader, b []byte) (int, error) {
 	for i := 0; i < 100; i++ {
-		n, err := r.Read(b)
-		if n != 0 || err != nil {
+		if n, err := r.Read(b); n != 0 || err != nil {
 			return n, err
 		}
 	}
