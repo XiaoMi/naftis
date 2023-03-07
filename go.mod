@@ -3,7 +3,6 @@ module github.com/xiaomi/naftis
 go 1.12
 
 require (
-	github.com/Azure/go-autorest v12.2.0+incompatible // indirect
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dvwright/xss-mw v0.0.0-20170109072128-5b2fd362dcaf
@@ -13,11 +12,10 @@ require (
 	github.com/gin-gonic/gin v1.3.0
 	github.com/gorilla/websocket v1.4.1
 	github.com/hashicorp/go-multierror v1.0.0
-	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/jinzhu/gorm v1.9.1
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.0 // indirect
-	github.com/microcosm-cc/bluemonday v1.0.0 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.20 // indirect
 	github.com/prometheus/client_golang v1.1.0
 	github.com/prometheus/common v0.6.0
 	github.com/sevenNt/wzap v1.0.0
@@ -27,7 +25,6 @@ require (
 	github.com/stretchr/testify v1.5.1
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
-	gopkg.in/yaml.v1 v1.0.0-20140924161607-9f9df34309c0 // indirect
 	istio.io/istio v0.0.0-20200708154433-f508fdd78eb0
 	k8s.io/api v0.18.1
 	k8s.io/apimachinery v0.18.1

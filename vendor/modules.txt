@@ -1,5 +1,8 @@
 # cloud.google.com/go v0.50.0
 cloud.google.com/go/compute/metadata
+# github.com/aymerick/douceur v0.2.0
+github.com/aymerick/douceur/css
+github.com/aymerick/douceur/parser
 # github.com/census-instrumentation/opencensus-proto v0.2.1
 github.com/census-instrumentation/opencensus-proto/gen-go/resource/v1
 github.com/census-instrumentation/opencensus-proto/gen-go/trace/v1
@@ -290,6 +293,8 @@ github.com/google/gofuzz
 github.com/googleapis/gnostic/OpenAPIv2
 github.com/googleapis/gnostic/compiler
 github.com/googleapis/gnostic/extensions
+# github.com/gorilla/css v1.0.0
+github.com/gorilla/css/scanner
 # github.com/gorilla/websocket v1.4.1
 github.com/gorilla/websocket
 # github.com/hashicorp/errwrap v1.0.0
@@ -325,8 +330,9 @@ github.com/json-iterator/go
 github.com/magiconair/properties
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
-# github.com/microcosm-cc/bluemonday v1.0.0
+# github.com/microcosm-cc/bluemonday v1.0.20
 github.com/microcosm-cc/bluemonday
+github.com/microcosm-cc/bluemonday/css
 # github.com/mitchellh/copystructure v1.0.0
 github.com/mitchellh/copystructure
 # github.com/mitchellh/mapstructure v1.1.2
@@ -397,7 +403,7 @@ go.uber.org/zap/zapcore
 go.uber.org/zap/zapgrpc
 # golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20191014212845-da9a3fd4c582
+# golang.org/x/net v0.0.0-20220826154423-83b083e8dc8b
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/html
@@ -414,10 +420,11 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sys v0.0.0-20200116001909-b77594299b42
+# golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.3.2
+# golang.org/x/text v0.3.7
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
