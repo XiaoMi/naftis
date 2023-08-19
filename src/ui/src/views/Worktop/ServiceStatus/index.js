@@ -28,7 +28,7 @@ const { Row, Col } = Grid
 
 class ServiceStatus extends Component {
   componentDidMount () {
-    socketAction.connetctSocket()
+    socketAction.connectSocket()
 
     // set BreadCrumbs
     const crumbsItems = [

@@ -26,7 +26,7 @@ import * as socketAction from './redux/actions/socket'
 export const store = configureStore()
 
 if (window.localStorage.getItem('isLogin')) {
-  socketAction.connetctSocket()
+  socketAction.connectSocket()
 }
 
 if (module.hot) {
