@@ -40,7 +40,7 @@ const userLogin = ({username, password, type, success}) => {
         window.localStorage.setItem('isLogin', true)
         window.localStorage.setItem('authToken', response.data.token)
         window.localStorage.setItem('username', response.data.currentAuthority)
-        // connetctSocket()
+        // connectSocket()
         window.location.href = '/'
         success && success()
       } else if (response.code === 1) {

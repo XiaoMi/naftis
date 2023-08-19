@@ -36,7 +36,7 @@ const setSocketStatus = (data) => ({
   payload: data
 })
 
-const connetctSocket = () => {
+const connectSocket = () => {
   const authToken = window.localStorage.getItem('authToken')
   let host = getHost()
   if (host === '') {
@@ -118,6 +118,6 @@ const socketMessage = (e) => {
 export {
   setSocketData,
   setSocketStatus,
-  connetctSocket,
+  connectSocket,
   TYPE
 }
